@@ -1,0 +1,84 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: propertyweb-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/propertyweb}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    # Flat keys intentional: nested YAML binding to JpaProperties.properties
+    # (Map<String,String>) was unreliable for `hibernate.type.json_format_mapper`.
+    properties:
+      "[hibernate.format_sql]": "true"
+      "[hibernate.type.json_format_mapper]": "org.hibernate.type.format.jackson.JacksonJsonFormatMapper"
+    open-in-view: false
+  flyway:
+    enabled: true
+    repair-on-migrate: true
+  # ── SMTP (Gmail / company SMTP) ─────────────────────────────
+  # Leave MAIL_USERNAME/MAIL_PASSWORD blank to keep mail disabled (links print to logs).
+  # For Gmail: use a 16-char App Password (not your account password). 2FA must be on.
+  # Host defaults to smtp.gmail.com; override MAIL_HOST for other providers.
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:true}
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
+app:
+  uploads:
+    dir: ${UPLOADS_DIR:${user.home}/.mangalorehomes/uploads}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@mangalorehomes.local}
+    admin-alert: ${MAIL_ADMIN_ALERT:}
+    frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  security:
+    jwt:
+      secret: ${JWT_SECRET:change-me-in-prod-change-me-in-prod-change-me}
+      issuer: ${JWT_ISSUER:mangalorehomes-api}
+      accessTokenTtlMinutes: ${JWT_ACCESS_TTL_MINUTES:720}
+  bootstrap:
+    enabled: ${BOOTSTRAP_ENABLED:false}
+    # Admin account is created ONLY if both email and password are set via env and the
+    # password passes the strength check (>=10 chars, not a known default). Never ships
+    # a default admin credential — that would be a silent backdoor.
+    admin:
+      email: ${BOOTSTRAP_ADMIN_EMAIL:}
+      password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+    # Seller/agent demo creation only runs when BOOTSTRAP_ENABLED=true.
+    seller:
+      email: ${BOOTSTRAP_SELLER_EMAIL:seller@mangalorehomes.local}
+      password: ${BOOTSTRAP_SELLER_PASSWORD:seller12345}
+    agent:
+      email: ${BOOTSTRAP_AGENT_EMAIL:agent@mangalorehomes.local}
+      password: ${BOOTSTRAP_AGENT_PASSWORD:agent12345}
+
+cors:
+  allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    # Disable the mail health probe — it tries to connect to SMTP on every /actuator/health
+    # call and returns DOWN when MAIL_* env vars are unset (the default dev case).
+    mail:
+      enabled: false
+

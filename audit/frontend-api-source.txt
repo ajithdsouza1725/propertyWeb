@@ -1,0 +1,121 @@
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:136:                      await apiFetch("/api/admin/amenities", { token, method: "POST", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:138:                      await apiFetch(`/api/admin/amenities/${editing.id}`, { token, method: "PUT", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:232:                                await apiFetch(`/api/admin/amenities/${a.id}`, { token, method: "DELETE" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:49:    apiFetch<any[]>(`/api/admin/amenities${params.toString() ? `?${params.toString()}` : ""}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/amenities/page.tsx:72:    const r = await apiFetch<any[]>(`/api/admin/amenities${params.toString() ? `?${params.toString()}` : ""}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/contact-messages/page.tsx:41:      const res = await apiFetch<PageResponse<Row>>(`/api/admin/contact-messages?${qs.toString()}`, { token });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/contact-messages/page.tsx:8:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:11:import { apiDownload, apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:121:              await apiDownload("/api/admin/enquiries/export", { token, filename: "enquiries.csv" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:237:                                  await apiFetch(`/api/admin/enquiries/${e.id}/status`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:277:                                  await apiFetch(`/api/admin/enquiries/${e.id}/assign`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:53:    apiFetch<any[]>("/api/admin/sellers", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/enquiries/page.tsx:76:      const res = await apiFetch<PageResponse<any>>(`/api/admin/enquiries?${qs.toString()}`, { token });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/homepage/page.tsx:146:              await apiFetch<Record<string, unknown>>("/api/admin/cms/homepage", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/homepage/page.tsx:35:    apiFetch<Record<string, unknown>>("/api/admin/cms/homepage", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/homepage/page.tsx:8:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:184:                      await apiFetch("/api/admin/locations", { token, method: "POST", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:186:                      await apiFetch(`/api/admin/locations/${editing.id}`, { token, method: "PUT", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:294:                                await apiFetch(`/api/admin/locations/${l.id}`, { token, method: "DELETE" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:54:    apiFetch<any[]>(`/api/admin/locations${params.toString() ? `?${params.toString()}` : ""}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/locations/page.tsx:77:    const r = await apiFetch<any[]>(`/api/admin/locations${params.toString() ? `?${params.toString()}` : ""}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/page.tsx:42:    apiFetch<DashboardStats>("/api/admin/dashboard/stats", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/page.tsx:7:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/[id]/page.tsx:11:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/[id]/page.tsx:31:    apiFetch(`/api/admin/properties/${params.id}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/page.tsx:14:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/page.tsx:166:                                        await apiFetch(`/api/admin/properties/${p.id}/approve`, { token, method: "POST" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/page.tsx:239:                    await apiFetch(`/api/admin/properties/${rejectingId}/reject`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/properties/page.tsx:57:    apiFetch<any[]>(`/api/admin/properties?status=${tab}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:141:                      await apiFetch("/api/admin/property-types", { token, method: "POST", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:143:                      await apiFetch(`/api/admin/property-types/${editing.id}`, { token, method: "PUT", body });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:237:                                await apiFetch(`/api/admin/property-types/${t.id}`, { token, method: "DELETE" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:49:    apiFetch<any[]>(`/api/admin/property-types${params.toString() ? `?${params.toString()}` : ""}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/property-types/page.tsx:72:    const r = await apiFetch<any[]>(`/api/admin/property-types${params.toString() ? `?${params.toString()}` : ""}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/reports/page.tsx:36:    apiFetch<DashboardStats>("/api/admin/dashboard/stats", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/reports/page.tsx:7:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/seo/page.tsx:121:                  await apiFetch<Record<string, unknown>>("/api/admin/cms/seo", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/seo/page.tsx:34:    apiFetch<Record<string, unknown>>("/api/admin/cms/seo", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/seo/page.tsx:9:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/settings/page.tsx:130:              await apiFetch<Record<string, unknown>>("/api/admin/cms/settings", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/settings/page.tsx:33:    apiFetch<Record<string, unknown>>("/api/admin/cms/settings", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/settings/page.tsx:7:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:12:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:212:                      await apiFetch("/api/admin/users", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:227:                      await apiFetch(`/api/admin/users/${editing.id}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:248:                    const r = await apiFetch<AdminUser[]>(
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:384:                                await apiFetch(`/api/admin/users/${u.id}`, { token, method: "DELETE" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(admin)/admin/(dashboard)/users/page.tsx:92:    apiFetch<AdminUser[]>(`/api/admin/users${params.toString() ? `?${params.toString()}` : ""}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/contact/page.tsx:16:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/contact/page.tsx:96:                        await apiFetch<{ ok: boolean }>("/api/public/contact", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/forgot-password/page.tsx:50:                    await apiFetch<{ ok: boolean }>("/api/auth/forgot-password", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/forgot-password/page.tsx:8:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/layout.tsx:12:    const res = await fetch(`${API_BASE_URL}/api/public/cms/seo`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/listings/page.tsx:58:    payload = await apiFetch<PageResponse<PublicPropertySummary>>(`/api/public/properties?${params.toString()}`);
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/listings/page.tsx:9:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/locality/[slug]/page.tsx:17:    const res = await apiFetch<PageResponse<PublicPropertySummary>>(
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/locality/[slug]/page.tsx:6:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/page.tsx:36:    const m = await apiFetch<Record<string, unknown>>("/api/public/cms/homepage");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/page.tsx:58:    const list = await apiFetch<PublicPropertySummary[]>(
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/page.tsx:69:    const res = await apiFetch<PageResponse<PublicPropertySummary>>("/api/public/properties?page=0&size=12");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/page.tsx:9:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/privacy/page.tsx:2:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/privacy/page.tsx:6:    const m = await apiFetch<Record<string, unknown>>("/api/public/cms/privacy");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/property/[slug]/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/property/[slug]/page.tsx:39:    return await apiFetch<PublicPropertyDetails>(`/api/public/properties/${slug}`);
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/property/[slug]/page.tsx:52:    const res = await apiFetch<PageResponse<PublicPropertySummary>>(`/api/public/properties?${params.toString()}`);
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/reset-password/reset-password-form.tsx:61:                await apiFetch<{ ok: boolean }>("/api/auth/reset-password", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/reset-password/reset-password-form.tsx:9:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/signup/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/signup/page.tsx:83:                const res = await apiFetch<{ accessToken: string }>("/api/auth/signup", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/signup/page.tsx:93:                const me = await apiFetch<{ role: string }>("/api/auth/me", { token: res.accessToken });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/terms/page.tsx:2:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/terms/page.tsx:6:    const m = await apiFetch<Record<string, unknown>>("/api/public/cms/terms");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/type/[slug]/page.tsx:16:    const res = await apiFetch<PageResponse<PublicPropertySummary>>(
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(marketing)/type/[slug]/page.tsx:5:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/enquiries/page.tsx:11:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/enquiries/page.tsx:54:      const res = await apiFetch<PageResponse<any>>(`/api/seller/enquiries?${qs.toString()}`, { token });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/page.tsx:10:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/page.tsx:29:      apiFetch<{ content: any[] }>("/api/seller/properties?page=0&size=100", { token }),
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/page.tsx:30:      apiFetch<{ content: any[] }>("/api/seller/enquiries?page=0&size=100", { token }),
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/profile/page.tsx:112:                    await apiFetch<Me>("/api/seller/profile", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/profile/page.tsx:177:                    await apiFetch("/api/seller/profile/password", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/profile/page.tsx:40:    apiFetch<Me>("/api/seller/profile", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/profile/page.tsx:7:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/[id]/edit/page.tsx:12:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/[id]/edit/page.tsx:410:                      await apiFetch(`/api/seller/properties/${id}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/[id]/edit/page.tsx:55:    apiFetch<any>(`/api/seller/properties/${id}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/new/page.tsx:12:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/new/page.tsx:398:                      await apiFetch("/api/seller/properties", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/page.tsx:12:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/page.tsx:198:                                    await apiFetch(`/api/seller/properties/${p.id}/resubmit`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/page.tsx:221:                                  await apiFetch(`/api/seller/properties/${p.id}`, { token, method: "DELETE" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/app/(seller)/seller/(panel)/properties/page.tsx:57:      const res = await apiFetch<PageResponse<any>>(`/api/seller/properties?${qs.toString()}`, { token });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/admin-guard.tsx:20:    apiFetch<{ role: string }>("/api/auth/me", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/admin-guard.tsx:6:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/approval-box.tsx:137:                  await apiFetch(`/api/admin/properties/${propertyId}/reject`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/approval-box.tsx:16:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/approval-box.tsx:97:                  await apiFetch(`/api/admin/properties/${propertyId}/approve`, { token, method: "POST" });
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/cms-legal-editor.tsx:23:    apiFetch<Record<string, unknown>>(`/api/admin/cms/${section}`, { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/cms-legal-editor.tsx:69:                  await apiFetch(`/api/admin/cms/${section}`, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/admin/cms-legal-editor.tsx:7:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/auth/role-login-form.tsx:92:                const res = await apiFetch<{ accessToken: string }>("/api/auth/login", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/auth/role-login-form.tsx:95:                const me = await apiFetch<{ role: string }>("/api/auth/me", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/auth/role-login-form.tsx:9:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/property/enquiry-card.tsx:56:              await apiFetch("/api/public/enquiries", {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/property/enquiry-card.tsx:8:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/site/site-footer.tsx:17:    const s = await apiFetch<Record<string, unknown>>("/api/public/cms/settings");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/site/site-footer.tsx:3:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/site/site-header.tsx:20:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/site/site-header.tsx:54:    apiFetch<{ role: string }>("/api/auth/me", { token })
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/components/site/site-header.tsx:60:    apiFetch<Record<string, unknown>>("/api/public/cms/settings")
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/api.ts:11:export async function apiFetch<T>(
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/api.ts:21:  const res = await fetch(url, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/api.ts:51:export async function apiDownload(path: string, opts: { token: string; filename: string }): Promise<void> {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/api.ts:53:  const res = await fetch(url, {
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/catalog.ts:18:  return await apiFetch<PublicLocality[]>("/api/public/localities");
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/catalog.ts:1:import { apiFetch } from "@/lib/api";
+/Users/rohanmonteiro/Documents/Akshay/propertyWeb/propertyweb/src/lib/catalog.ts:22:  return await apiFetch<PublicPropertyType[]>("/api/public/property-types");

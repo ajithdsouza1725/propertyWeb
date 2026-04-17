@@ -1,0 +1,37 @@
+package com.mangalorehomes.propertyweb.publicapi.dto;
+
+import java.util.List;
+
+public record PropertyDetails(
+    Long id,
+    String title,
+    String slug,
+    String purpose,
+    String description,
+    Long price,
+    Long securityDeposit,
+    String propertyType,
+    String propertyTypeSlug,
+    String city,
+    String addressLine,
+    String locality,
+    String localitySlug,
+    String pincode,
+    Double latitude,
+    Double longitude,
+    Integer bedrooms,
+    Integer bathrooms,
+    Integer balconies,
+    Integer areaSqft,
+    Integer carpetAreaSqft,
+    String furnishingStatus,
+    Integer parkingCount,
+    Integer floorNumber,
+    Integer totalFloors,
+    String possessionStatus,
+    boolean isFeatured,
+    boolean isVerified,
+    List<String> imageUrls,
+    List<String> amenities,
+    long viewsCount,
+    boolean saved) {}

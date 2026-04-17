@@ -1,0 +1,29 @@
+# === Backend ===
+backend/target/
+*.class
+*.jar
+*.war
+
+# === Frontend ===
+propertyweb/node_modules/
+propertyweb/.next/
+propertyweb/out/
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Env (secrets) ===
+propertyweb/.env.local
+propertyweb/.env.production
+
+# === Uploads (user content) ===
+uploads/
+
+# === Claude ===
+.claude/

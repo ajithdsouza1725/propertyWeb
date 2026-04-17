@@ -1,0 +1,54 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: propertyweb-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/propertyweb}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+
+app:
+  uploads:
+    dir: ${UPLOADS_DIR:${user.home}/.mangalorehomes/uploads}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@mangalorehomes.local}
+    admin-alert: ${MAIL_ADMIN_ALERT:}
+    frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  security:
+    jwt:
+      secret: ${JWT_SECRET:change-me-in-prod-change-me-in-prod-change-me}
+      issuer: ${JWT_ISSUER:mangalorehomes-api}
+      accessTokenTtlMinutes: ${JWT_ACCESS_TTL_MINUTES:720}
+  bootstrap:
+    enabled: ${BOOTSTRAP_ENABLED:false}
+    admin:
+      email: ${BOOTSTRAP_ADMIN_EMAIL:admin@mangalorehomes.local}
+      password: ${BOOTSTRAP_ADMIN_PASSWORD:admin12345}
+    seller:
+      email: ${BOOTSTRAP_SELLER_EMAIL:seller@mangalorehomes.local}
+      password: ${BOOTSTRAP_SELLER_PASSWORD:seller12345}
+    agent:
+      email: ${BOOTSTRAP_AGENT_EMAIL:agent@mangalorehomes.local}
+      password: ${BOOTSTRAP_AGENT_PASSWORD:agent12345}
+
+cors:
+  allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
