@@ -86,7 +86,8 @@ export default function AdminAmenitiesPage() {
     <div className="space-y-6">
       {confirm.dialog}
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Manage amenities</h1>
+        <h1 className="text-2xl font-black tracking-tight md:text-3xl">Manage amenities</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Add, edit or disable amenities that sellers can tag on their listings.</p>
         <Button
           onClick={() => {
             setMode("create");

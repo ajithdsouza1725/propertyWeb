@@ -70,6 +70,7 @@ export default function AdminPropertyReviewPage({ params }: { params: { id: stri
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState<Record<string, any>>({});
   const [editSaving, setEditSaving] = useState(false);
+  const [similar, setSimilar] = useState<any[]>([]);
   const confirm = useConfirm();
 
   // Next.js 16: params may be a Promise in some contexts. We extract the id
@@ -86,6 +87,14 @@ export default function AdminPropertyReviewPage({ params }: { params: { id: stri
       .finally(() => { if (!mounted) return; setLoading(false); });
     return () => { mounted = false; };
   }, [token, propertyId, apiOk]);
+
+  // Load similar / duplicate listings
+  useEffect(() => {
+    if (!apiOk || !property?.id) return;
+    apiFetch<any[]>(`/api/admin/properties/${property.id}/similar`, { token: token ?? undefined })
+      .then((r) => setSimilar(Array.isArray(r) ? r : []))
+      .catch(() => setSimilar([]));
+  }, [token, property?.id, apiOk]);
 
   useEffect(() => {
     let mounted = true;
@@ -391,6 +400,34 @@ export default function AdminPropertyReviewPage({ params }: { params: { id: stri
                 } : prev);
               }}
             />
+
+            {/* Duplicate / Similar Listings Warning */}
+            {similar.length > 0 && (
+              <Card className="border-amber-200 bg-amber-50/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="size-4 text-amber-600" />
+                    <span className="text-sm font-bold text-amber-900">{similar.length} similar listing{similar.length > 1 ? "s" : ""} found</span>
+                  </div>
+                  <p className="text-xs text-amber-800 mb-3">Same locality + type with similar price/area. Review before approving.</p>
+                  <div className="space-y-2">
+                    {similar.map((s: any) => (
+                      <Link
+                        key={s.id}
+                        href={`/admin/properties/${s.id}`}
+                        className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-xs hover:bg-amber-50 transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <div className="font-medium text-foreground truncate">{s.title}</div>
+                          <div className="text-muted-foreground">{s.locality} · ₹{(s.price / 100000).toFixed(1)}L</div>
+                        </div>
+                        <Badge variant="outline" className="shrink-0 text-[10px] ml-2">{s.approvalStatus}</Badge>
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Admin Edit Property */}
             <Button

@@ -25,6 +25,9 @@ public class ContactMessageEntity {
   @Column(nullable = false)
   public String message;
 
+  @Column(name = "is_read", nullable = false)
+  public boolean isRead = false;
+
   @Column(name = "created_at", nullable = false)
   public Instant createdAt = Instant.now();
 }

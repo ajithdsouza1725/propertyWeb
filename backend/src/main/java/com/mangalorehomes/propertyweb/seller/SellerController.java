@@ -61,6 +61,28 @@ public class SellerController {
   }
 
   @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
+  @GetMapping("/dashboard/stats")
+  @Transactional(readOnly = true)
+  public java.util.Map<String, Object> dashboardStats(@AuthenticationPrincipal SecurityUser principal) {
+    var myProps = properties.findByUserIdOrderByCreatedAtDesc(principal.id());
+    long total = myProps.size();
+    long active = myProps.stream().filter(p -> p.approvalStatus == com.mangalorehomes.propertyweb.properties.ApprovalStatus.approved && p.listingStatus == com.mangalorehomes.propertyweb.properties.ListingStatus.active).count();
+    long pending = myProps.stream().filter(p -> p.approvalStatus == com.mangalorehomes.propertyweb.properties.ApprovalStatus.pending).count();
+    long rejected = myProps.stream().filter(p -> p.approvalStatus == com.mangalorehomes.propertyweb.properties.ApprovalStatus.rejected).count();
+    long expired = myProps.stream().filter(p -> p.listingStatus == com.mangalorehomes.propertyweb.properties.ListingStatus.expired).count();
+    long views = myProps.stream().mapToLong(p -> p.viewsCount != null ? p.viewsCount : 0).sum();
+
+    var m = new java.util.LinkedHashMap<String, Object>();
+    m.put("totalListings", total);
+    m.put("activeListings", active);
+    m.put("pendingListings", pending);
+    m.put("rejectedListings", rejected);
+    m.put("expiredListings", expired);
+    m.put("viewsThisMonth", views);
+    return m;
+  }
+
+  @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
   @GetMapping("/properties")
   public PageResponse<?> myProperties(
       @AuthenticationPrincipal SecurityUser principal,
@@ -297,6 +319,101 @@ public class SellerController {
     }
     var imgs = images.findAllByPropertyIdOrderBySortOrderAscIdAsc(p.id).stream().map(x -> x.imageUrl).toList();
     return java.util.Map.of("id", p.id, "imageUrls", imgs);
+  }
+
+  // ── Delete single image ───────────────────────────────────────────
+
+  @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
+  @DeleteMapping("/properties/{id}/images/{imageId}")
+  public Object deleteImage(
+      @AuthenticationPrincipal SecurityUser principal,
+      @PathVariable Long id,
+      @PathVariable Long imageId) {
+    var p = loadEditableProperty(principal, id);
+    var img = images.findById(imageId).orElseThrow(() -> new IllegalArgumentException("Image not found"));
+    if (!img.property.id.equals(p.id)) throw new IllegalArgumentException("Image does not belong to this property.");
+    images.delete(img);
+    // Delete file from disk
+    try {
+      var uploadsDir = java.nio.file.Path.of(System.getProperty("user.home"), ".mangalorehomes", "uploads");
+      if (img.imageUrl != null && img.imageUrl.startsWith("/uploads/")) {
+        var filename = img.imageUrl.substring("/uploads/".length());
+        java.nio.file.Files.deleteIfExists(uploadsDir.resolve(filename));
+      }
+    } catch (Exception ignored) {}
+    return java.util.Map.of("message", "Image deleted");
+  }
+
+  // ── Reorder images ────────────────────────────────────────────────
+
+  public record ReorderImagesRequest(List<Long> imageIds) {}
+
+  @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
+  @PutMapping("/properties/{id}/images/reorder")
+  public Object reorderImages(
+      @AuthenticationPrincipal SecurityUser principal,
+      @PathVariable Long id,
+      @Valid @RequestBody ReorderImagesRequest req) {
+    var p = loadEditableProperty(principal, id);
+    if (req.imageIds() == null || req.imageIds().isEmpty()) {
+      throw new IllegalArgumentException("imageIds required.");
+    }
+    var allImgs = images.findAllByPropertyIdOrderBySortOrderAscIdAsc(p.id);
+    var idToImg = new java.util.HashMap<Long, PropertyImageEntity>();
+    for (var img : allImgs) idToImg.put(img.id, img);
+
+    int order = 0;
+    for (Long imgId : req.imageIds()) {
+      var img = idToImg.get(imgId);
+      if (img != null) {
+        img.sortOrder = order++;
+        images.save(img);
+      }
+    }
+    return java.util.Map.of("message", "Order saved");
+  }
+
+  // ── Renew expired listing ─────────────────────────────────────────
+
+  @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
+  @PostMapping("/properties/{id}/renew")
+  public Object renewListing(
+      @AuthenticationPrincipal SecurityUser principal,
+      @PathVariable Long id) {
+    var p = loadEditableProperty(principal, id);
+    if (p.listingStatus != com.mangalorehomes.propertyweb.properties.ListingStatus.expired) {
+      throw new IllegalArgumentException("Only expired listings can be renewed.");
+    }
+    p.listingStatus = com.mangalorehomes.propertyweb.properties.ListingStatus.active;
+    p.approvalStatus = com.mangalorehomes.propertyweb.properties.ApprovalStatus.pending;
+    p.expiresAt = null;
+    p.updatedAt = Instant.now();
+    properties.save(p);
+    return java.util.Map.of("message", "Listing submitted for re-approval");
+  }
+
+  // ── Seller listing status toggle (mark as sold/inactive) ──────────
+
+  public record StatusRequest(@NotBlank String status) {}
+
+  @PreAuthorize("hasAnyRole('OWNER','AGENT','ADMIN')")
+  @PostMapping("/properties/{id}/status")
+  public Object updateStatus(
+      @AuthenticationPrincipal SecurityUser principal,
+      @PathVariable Long id,
+      @Valid @RequestBody StatusRequest req) {
+    var p = loadEditableProperty(principal, id);
+    if (p.approvalStatus != com.mangalorehomes.propertyweb.properties.ApprovalStatus.approved) {
+      throw new IllegalArgumentException("Can only change status on approved listings.");
+    }
+    var status = req.status().trim().toLowerCase(java.util.Locale.ROOT);
+    if (!status.equals("active") && !status.equals("inactive") && !status.equals("sold") && !status.equals("rented")) {
+      throw new IllegalArgumentException("Status must be active, inactive, sold, or rented.");
+    }
+    p.listingStatus = com.mangalorehomes.propertyweb.properties.ListingStatus.valueOf(status);
+    p.updatedAt = Instant.now();
+    properties.save(p);
+    return java.util.Map.of("id", p.id, "listingStatus", p.listingStatus.name());
   }
 
   private PropertyEntity loadEditableProperty(SecurityUser principal, Long id) {

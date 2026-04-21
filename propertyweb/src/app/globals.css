@@ -171,14 +171,30 @@
   }
 }
 
-/* ── Motion — minimal, purposeful ─────────────────── */
+/* ── Motion ─────────────────────────────────────────
+   Scroll-triggered animations use .animate-on-scroll
+   which is activated by IntersectionObserver (see below).
+   Stagger children with animation-delay via CSS vars. */
+
 @keyframes fade-up {
-  0%   { opacity: 0.01; transform: translateY(10px); }
-  100% { opacity: 1;    transform: translateY(0); }
+  0%   { opacity: 0; transform: translateY(18px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes fade-in {
-  0%   { opacity: 0.01; }
+  0%   { opacity: 0; }
   100% { opacity: 1; }
+}
+@keyframes fade-left {
+  0%   { opacity: 0; transform: translateX(-16px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes scale-in {
+  0%   { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-up-fade {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes shimmer-bg {
   from { background-position: -200% 0; }
@@ -189,9 +205,101 @@
   70%  { box-shadow: 0 0 0 12px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
-.animate-fade-up    { animation: fade-up 0.5s ease forwards; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes count-up {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Direct animation classes */
+.animate-fade-up    { animation: fade-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-fade-in    { animation: fade-in 0.4s ease forwards; }
+.animate-fade-left  { animation: fade-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-scale-in   { animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .animate-pulse-ring { animation: pulse-ring 2s infinite; }
+.animate-float      { animation: float 3s ease-in-out infinite; }
+
+/* ── Scroll-triggered animations ─────────────────────
+   Add .scroll-animate to any element. It starts invisible
+   and animates in when it enters the viewport.
+   Use data-delay="1" through data-delay="6" for stagger. */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-animate[data-delay="1"] { transition-delay: 0.05s; }
+.scroll-animate[data-delay="2"] { transition-delay: 0.10s; }
+.scroll-animate[data-delay="3"] { transition-delay: 0.15s; }
+.scroll-animate[data-delay="4"] { transition-delay: 0.20s; }
+.scroll-animate[data-delay="5"] { transition-delay: 0.25s; }
+.scroll-animate[data-delay="6"] { transition-delay: 0.30s; }
+
+/* Scale variant */
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-animate-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Hover micro-interactions ────────────────────────
+   Subtle scale + glow for interactive elements. */
+.hover-glow {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 20px color-mix(in oklch, var(--primary) 30%, transparent);
+  transform: translateY(-2px);
+}
+
+/* Button press effect */
+.press-effect {
+  transition: transform 0.15s ease;
+}
+.press-effect:active {
+  transform: scale(0.97);
+}
+
+/* Gradient text animation — slow sweep */
+.text-gradient-animate {
+  background: linear-gradient(90deg, var(--primary), var(--brand-2), var(--primary));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-bg 4s linear infinite;
+}
+
+/* Underline animation on hover */
+.hover-underline {
+  position: relative;
+}
+.hover-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-underline:hover::after {
+  width: 100%;
+}
 
 /* ── Skeleton shimmer ─────────────────────────────── */
 .skeleton {
@@ -214,13 +322,18 @@
 
 /* ── Card hover (used on clickable cards everywhere) ─ */
 .card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
 }
 .card-hover:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow:
-    0 12px 28px -12px color-mix(in oklch, var(--primary) 22%, transparent),
-    0 4px 10px -4px color-mix(in oklch, black 8%, transparent);
+    0 16px 32px -12px color-mix(in oklch, var(--primary) 22%, transparent),
+    0 4px 12px -4px color-mix(in oklch, black 8%, transparent);
+}
+.card-hover:active {
+  transform: translateY(-1px);
 }
 
 /* ── Subtle brand gradient border (reserved for FEATURED) ─ */

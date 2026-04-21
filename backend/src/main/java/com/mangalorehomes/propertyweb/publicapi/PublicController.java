@@ -143,14 +143,29 @@ public class PublicController {
         rows.getSize());
   }
 
+  // Rate-limited view tracking: 1 view per IP per property per hour.
+  private static final long VIEW_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+  private final java.util.concurrent.ConcurrentHashMap<String, Long> viewTracker = new java.util.concurrent.ConcurrentHashMap<>();
+
   @GetMapping("/properties/{slug}")
   @Transactional
   public PropertyDetails propertyBySlug(
-      @PathVariable String slug, @AuthenticationPrincipal SecurityUser principal) {
+      @PathVariable String slug,
+      @AuthenticationPrincipal SecurityUser principal,
+      jakarta.servlet.http.HttpServletRequest httpReq) {
     var p = properties.findBySlug(slug).orElseThrow(() -> new IllegalArgumentException("Not found"));
     if (p.approvalStatus == ApprovalStatus.approved && p.listingStatus == ListingStatus.active) {
-      properties.incrementViewsCountById(p.id);
-      p.viewsCount = (p.viewsCount == null ? 0L : p.viewsCount) + 1;
+      // Rate-limit: 1 view per IP per property per hour
+      String xff = httpReq.getHeader("X-Forwarded-For");
+      String ip = (xff != null && !xff.isBlank()) ? xff.split(",")[0].trim() : httpReq.getRemoteAddr();
+      String viewKey = ip + ":" + p.id;
+      long now = System.currentTimeMillis();
+      Long lastView = viewTracker.get(viewKey);
+      if (lastView == null || now - lastView > VIEW_WINDOW_MS) {
+        viewTracker.put(viewKey, now);
+        properties.incrementViewsCountById(p.id);
+        p.viewsCount = (p.viewsCount == null ? 0L : p.viewsCount) + 1;
+      }
     }
     var imageUrls =
         images.findAllByPropertyIdOrderBySortOrderAscIdAsc(p.id).stream()

@@ -87,7 +87,7 @@ export default function AdminPropertiesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Manage Properties</h1>
+          <h1 className="text-2xl font-black tracking-tight md:text-3xl">Manage Properties</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Approve or reject listings, view seller and lead details.
           </p>

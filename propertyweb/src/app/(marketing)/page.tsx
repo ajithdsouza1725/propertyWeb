@@ -138,67 +138,84 @@ export default async function HomePage() {
           Full-bleed dark mesh, confident display headline.
           No cartoon blobs — the mesh is baked into the bg. */}
       <section className="hero-mesh noise relative overflow-hidden text-white">
-        <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-24 md:pt-28 md:pb-32">
+        {/* Animated gradient orbs — adds depth and life */}
+        <div aria-hidden className="pointer-events-none absolute -left-32 top-1/4 size-96 rounded-full bg-primary/30 blur-[100px] animate-float" />
+        <div aria-hidden className="pointer-events-none absolute -right-24 bottom-1/4 size-80 rounded-full bg-brand-2/25 blur-[90px] animate-float" style={{ animationDelay: "1.5s" }} />
+        <div aria-hidden className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 size-64 rounded-full bg-white/5 blur-[80px] animate-float" style={{ animationDelay: "0.8s" }} />
+
+        <div className="relative mx-auto max-w-6xl px-4 pt-24 pb-28 md:pt-32 md:pb-36">
           <div className="mx-auto max-w-4xl text-center">
 
-            {/* Kicker */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-white/85 backdrop-blur-sm">
-              <Sparkles className="size-3.5 text-brand-2" />
+            {/* Kicker — animated entrance */}
+            <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-4 py-2 text-xs font-semibold text-white/90 shadow-lg shadow-black/10 backdrop-blur-md" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
+              <Sparkles className="size-3.5 text-brand-2 animate-float" />
               Mangalore&apos;s trusted property portal
+              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300">VERIFIED</span>
             </div>
 
-            {/* Display headline — huge, tight, magazine */}
-            <h1 className="display-headline mt-7 text-[44px] text-white md:text-[64px] lg:text-[76px]">
+            {/* Display headline — gradient text + animated entrance */}
+            <h1 className="animate-fade-up display-headline mt-8 text-[46px] text-white md:text-[66px] lg:text-[80px]" style={{ animationDelay: "0.25s", animationFillMode: "both" }}>
               {headLine1}
               {headLine2 && (
                 <>
                   <br />
-                  <span className="text-white/70">{headLine2}</span>
+                  <span className="text-gradient-animate">{headLine2}</span>
                 </>
               )}
             </h1>
 
-            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/70 md:text-lg">
+            <p className="animate-fade-up mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/75 md:text-lg" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
               {cms.heroSubtitle}
             </p>
 
-            {/* Search */}
-            <div className="mx-auto mt-10 max-w-2xl">
-              <HeroSearch />
+            {/* Search — glowing container */}
+            <div className="animate-fade-up mx-auto mt-12 max-w-2xl" style={{ animationDelay: "0.55s", animationFillMode: "both" }}>
+              <div className="rounded-3xl p-[1px] bg-gradient-to-r from-primary/50 via-white/20 to-brand-2/50 shadow-2xl shadow-primary/20">
+                <div className="rounded-[23px] bg-slate-950/80 backdrop-blur-xl">
+                  <HeroSearch />
+                </div>
+              </div>
             </div>
 
-            {/* Stats — restrained, tabular */}
-            <dl className="mt-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
+            {/* Stats — glowing cards with staggered entrance */}
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-6">
               {[
-                { value: "500+", label: "Verified listings" },
-                { value: "1,200+", label: "Happy buyers" },
-                { value: `${localities.length || "20"}+`, label: "Localities" },
-              ].map((s) => (
-                <div key={s.label} className="text-center">
-                  <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/55">
-                    {s.label}
-                  </dt>
-                  <dd className="mt-1 text-2xl font-black tabular-nums text-white md:text-3xl">
-                    {s.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+                { value: "500+", label: "Verified listings", icon: Building2 },
+                { value: "1,200+", label: "Happy buyers", icon: CheckCircle2 },
+                { value: `${localities.length || "20"}+`, label: "Localities", icon: MapPin },
+              ].map((s, i) => {
+                const Icon = s.icon;
+                return (
+                  <div
+                    key={s.label}
+                    className="animate-fade-up group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10"
+                    style={{ animationDelay: `${0.7 + i * 0.1}s`, animationFillMode: "both" }}
+                  >
+                    <Icon className="size-5 text-white/50 group-hover:text-brand-2 transition-colors" />
+                    <div className="text-left">
+                      <div className="text-xl font-black tabular-nums text-white md:text-2xl">{s.value}</div>
+                      <div className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/50">{s.label}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Soft bleed into the next section */}
-        <div
-          aria-hidden
-          className="h-16 bg-linear-to-b from-transparent to-background"
-        />
+        {/* Curved wave transition */}
+        <div aria-hidden className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+            <path d="M0 60L1440 60L1440 24C1200 56 960 64 720 48C480 32 240 4 0 24L0 60Z" className="fill-background" />
+          </svg>
+        </div>
       </section>
 
       {/* ── BUY / RENT / SELL — 3 bold action cards ──────
           The #1 thing a visitor needs to decide. Big, clear, clickable. */}
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="mb-10 text-center">
+          <div className="scroll-animate mb-10 text-center">
             <p className="eyebrow">What are you looking for?</p>
             <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
               Buy, rent or sell
@@ -212,7 +229,10 @@ export default async function HomePage() {
                 desc: "Apartments, villas, plots and independent houses across Mangalore.",
                 href: "/listings?purpose=buy",
                 icon: Home,
-                stat: "Buy",
+                label: "Browse",
+                accent: "from-primary/10 to-primary/5",
+                iconBg: "bg-primary/10 text-primary",
+                num: "01",
                 dark: false,
               },
               {
@@ -220,7 +240,10 @@ export default async function HomePage() {
                 desc: "Furnished and unfurnished rentals. Studios to family homes.",
                 href: "/listings?purpose=rent",
                 icon: Key,
-                stat: "Rent",
+                label: "Explore",
+                accent: "from-emerald-500/10 to-emerald-500/5",
+                iconBg: "bg-emerald-500/10 text-emerald-600",
+                num: "02",
                 dark: false,
               },
               {
@@ -228,26 +251,33 @@ export default async function HomePage() {
                 desc: "Post for free. Reach verified buyers. No commission.",
                 href: "/seller/properties/new",
                 icon: TrendingUp,
-                stat: "Sell",
+                label: "Get started",
+                accent: "",
+                iconBg: "",
+                num: "03",
                 dark: true,
               },
-            ].map((card) => {
+            ].map((card, ci) => {
               const Icon = card.icon;
               return card.dark ? (
                 <Link
                   key={card.href}
                   href={card.href}
-                  className="group card-hover relative overflow-hidden rounded-2xl bg-slate-950 p-7 text-white"
+                  className="scroll-animate group card-hover relative overflow-hidden rounded-2xl bg-slate-950 p-7 text-white"
+                  data-delay={String(ci + 1)}
                 >
-                  <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-primary/20 blur-2xl" />
+                  {/* Animated orb */}
+                  <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 size-48 rounded-full bg-primary/25 blur-3xl animate-float" />
+                  <div aria-hidden className="pointer-events-none absolute -bottom-8 -left-8 size-32 rounded-full bg-brand-2/20 blur-2xl animate-float" style={{ animationDelay: "1s" }} />
                   <div className="relative">
-                    <div className="flex size-12 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+                    <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">{card.num}</div>
+                    <div className="flex size-12 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15 backdrop-blur-sm">
                       <Icon className="size-6" />
                     </div>
                     <h3 className="mt-5 text-xl font-black">{card.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-white/65">{card.desc}</p>
-                    <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold">
-                      Get started <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                    <div className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition-all group-hover:bg-white/15">
+                      {card.label} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 </Link>
@@ -255,17 +285,19 @@ export default async function HomePage() {
                 <Link
                   key={card.href}
                   href={card.href}
-                  className="group card-hover flex flex-col justify-between rounded-2xl border bg-card p-7"
+                  className={`scroll-animate group card-hover relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-linear-to-br ${card.accent} p-7`}
+                  data-delay={String(ci + 1)}
                 >
                   <div>
-                    <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">{card.num}</div>
+                    <div className={`flex size-12 items-center justify-center rounded-xl ${card.iconBg} transition-transform group-hover:scale-110`}>
                       <Icon className="size-6" />
                     </div>
                     <h3 className="mt-5 text-xl font-black">{card.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.desc}</p>
                   </div>
-                  <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                    Explore <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                    {card.label} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1.5" />
                   </div>
                 </Link>
               );
@@ -279,7 +311,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-14">
           <div className="mb-8 flex items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Explore</p>
+              <p className="scroll-animate eyebrow">Explore</p>
               <h2 className="mt-2 text-2xl font-black tracking-tight md:text-3xl">
                 Browse by property type
               </h2>
@@ -316,7 +348,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
             <div>
-              <p className="eyebrow">{featured.length ? "Hand-picked" : "Latest"}</p>
+              <p className="scroll-animate eyebrow">{featured.length ? "Hand-picked" : "Latest"}</p>
               <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
                 {featured.length ? "Featured properties" : "New to the market"}
               </h2>
@@ -374,7 +406,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-6xl px-4">
             <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
               <div>
-                <p className="eyebrow">Neighbourhoods</p>
+                <p className="scroll-animate eyebrow">Neighbourhoods</p>
                 <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
                   Explore by locality
                 </h2>
@@ -447,7 +479,7 @@ export default async function HomePage() {
       <section className="py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-12 max-w-xl">
-            <p className="eyebrow">Our promise</p>
+            <p className="scroll-animate eyebrow">Our promise</p>
             <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
               Property-hunting, done properly.
             </h2>
@@ -487,7 +519,7 @@ export default async function HomePage() {
         <section className="border-y bg-surface py-20 md:py-24">
           <div className="mx-auto max-w-6xl px-4">
             <div className="mb-12 max-w-xl">
-              <p className="eyebrow">Reviews</p>
+              <p className="scroll-animate eyebrow">Reviews</p>
               <h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
                 Trusted by families across the coast.
               </h2>

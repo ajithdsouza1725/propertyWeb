@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { ScrollAnimateObserver } from "@/components/ui/scroll-animate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
         {children}
+        <ScrollAnimateObserver />
         <GoogleAnalytics />
       </body>
     </html>

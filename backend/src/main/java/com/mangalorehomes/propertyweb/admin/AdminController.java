@@ -2,6 +2,7 @@ package com.mangalorehomes.propertyweb.admin;
 
 import com.mangalorehomes.propertyweb.catalog.PropertyAmenityLookup;
 import com.mangalorehomes.propertyweb.notifications.InAppNotificationService;
+import com.mangalorehomes.propertyweb.notifications.MailNotificationService;
 import com.mangalorehomes.propertyweb.properties.ApprovalStatus;
 import com.mangalorehomes.propertyweb.properties.PropertyImageRepository;
 import com.mangalorehomes.propertyweb.properties.PropertyRepository;
@@ -37,6 +38,7 @@ public class AdminController {
   private final PropertyImageRepository propertyImages;
   private final PropertyAmenityLookup amenityLookup;
   private final InAppNotificationService inApp;
+  private final MailNotificationService mail;
   private final PropertyTypeRepository propertyTypes;
   private final LocalityRepository localities;
 
@@ -47,6 +49,7 @@ public class AdminController {
       PropertyImageRepository propertyImages,
       PropertyAmenityLookup amenityLookup,
       InAppNotificationService inApp,
+      MailNotificationService mail,
       PropertyTypeRepository propertyTypes,
       LocalityRepository localities) {
     this.properties = properties;
@@ -55,6 +58,7 @@ public class AdminController {
     this.propertyImages = propertyImages;
     this.amenityLookup = amenityLookup;
     this.inApp = inApp;
+    this.mail = mail;
     this.propertyTypes = propertyTypes;
     this.localities = localities;
   }
@@ -201,6 +205,7 @@ public class AdminController {
     p.approvalStatus = ApprovalStatus.approved;
     p.rejectionReason = null;
     p.isVerified = true;
+    p.expiresAt = Instant.now().plus(java.time.Duration.ofDays(90));
     p.updatedAt = Instant.now();
     properties.save(p);
 
@@ -210,6 +215,7 @@ public class AdminController {
           p.user.id,
           "Listing approved",
           "Your listing \"" + p.title + "\" has been approved and is now live on the site.");
+      mail.notifySellerListingApproved(p.user.email, p.title, p.slug);
     }
     return Map.of("id", p.id, "approvalStatus", p.approvalStatus.name());
   }
@@ -232,6 +238,7 @@ public class AdminController {
           "Listing rejected",
           "Your listing \"" + p.title + "\" was rejected. Reason: " + req.reason()
               + ". Edit and resubmit from Seller → My Properties.");
+      mail.notifySellerListingRejected(p.user.email, p.title, req.reason());
     }
     return Map.of("id", p.id, "approvalStatus", p.approvalStatus.name());
   }
@@ -336,6 +343,49 @@ public class AdminController {
     if (v == null) return null;
     if (v instanceof Number n) return n.intValue();
     try { return Integer.parseInt(String.valueOf(v).trim()); } catch (NumberFormatException e) { return null; }
+  }
+
+  // ── Duplicate / similar listing detection ───────────────────────────
+
+  @GetMapping("/properties/{id}/similar")
+  @Transactional(readOnly = true)
+  public List<?> similarListings(@PathVariable Long id) {
+    var p = properties.findById(id).orElseThrow(() -> new IllegalArgumentException("Not found"));
+    var localityId = p.locality != null ? p.locality.id : null;
+    var typeId = p.propertyType != null ? p.propertyType.id : null;
+    if (localityId == null && typeId == null) return List.of();
+
+    double priceLow = p.price * 0.85;
+    double priceHigh = p.price * 1.15;
+    Integer areaLow = p.areaSqft != null ? (int) (p.areaSqft * 0.9) : null;
+    Integer areaHigh = p.areaSqft != null ? (int) (p.areaSqft * 1.1) : null;
+
+    return properties.findAll().stream()
+        .filter(x -> !x.id.equals(p.id))
+        .filter(x -> x.approvalStatus == ApprovalStatus.approved || x.approvalStatus == ApprovalStatus.pending)
+        .filter(x -> {
+          boolean localityMatch = localityId != null && x.locality != null && x.locality.id.equals(localityId);
+          boolean typeMatch = typeId != null && x.propertyType != null && x.propertyType.id.equals(typeId);
+          return localityMatch && typeMatch;
+        })
+        .filter(x -> x.price >= priceLow && x.price <= priceHigh)
+        .filter(x -> {
+          if (areaLow == null || x.areaSqft == null) return true;
+          return x.areaSqft >= areaLow && x.areaSqft <= areaHigh;
+        })
+        .limit(5)
+        .map(x -> {
+          var m = new LinkedHashMap<String, Object>();
+          m.put("id", x.id);
+          m.put("title", x.title);
+          m.put("slug", x.slug);
+          m.put("price", x.price);
+          m.put("areaSqft", x.areaSqft);
+          m.put("approvalStatus", x.approvalStatus != null ? x.approvalStatus.name() : null);
+          m.put("locality", x.locality != null ? x.locality.name : null);
+          return m;
+        })
+        .toList();
   }
 
   @GetMapping("/sellers")

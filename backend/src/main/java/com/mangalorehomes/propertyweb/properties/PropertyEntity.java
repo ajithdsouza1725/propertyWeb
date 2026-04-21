@@ -127,6 +127,9 @@ public class PropertyEntity {
   @Column(name = "views_count", nullable = false)
   public Long viewsCount = 0L;
 
+  @Column(name = "expires_at")
+  public Instant expiresAt;
+
   @Column(name = "created_at", nullable = false)
   public Instant createdAt = Instant.now();
 

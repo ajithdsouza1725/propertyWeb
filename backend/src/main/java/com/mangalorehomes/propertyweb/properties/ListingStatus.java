@@ -4,6 +4,7 @@ public enum ListingStatus {
   active,
   sold,
   rented,
-  inactive
+  inactive,
+  expired
 }
 

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EmiCalculator } from "@/components/property/emi-calculator";
@@ -97,6 +98,28 @@ function SpecItem({ icon, label, value }: { icon: React.ReactNode; label: string
       <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const p = await getProperty(slug);
+  if (!p) return { title: "Property Not Found" };
+
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+  const title = `${p.title}${p.locality ? ` in ${p.locality}` : ""}, Mangalore | MangaloreHomes`;
+  const description = (p.description ?? "").slice(0, 160) || `${p.title} — verified property listing on MangaloreHomes.`;
+  const ogImage = p.imageUrls?.[0] ? mediaAbsoluteUrl(p.imageUrls[0]) : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/property/${p.slug}`,
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+  };
 }
 
 export default async function PropertyDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -306,26 +329,45 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
               </div>
             )}
 
-            {/* Location */}
+            {/* Location + Google Maps embed */}
             <div>
               <h2 className="mb-3 text-lg font-black tracking-tight">Location</h2>
-              <div className="rounded-2xl border p-4">
-                <div className="flex items-start gap-3">
-                  <MapPin className="size-5 text-muted-foreground mt-0.5 shrink-0" />
-                  <div>
-                    <div className="font-medium">{property.locality ?? "Mangalore"}</div>
-                    {property.addressLine && (
-                      <div className="mt-0.5 text-sm text-muted-foreground">{property.addressLine}</div>
-                    )}
-                  </div>
+              <div className="rounded-2xl border overflow-hidden">
+                {/* Map embed — uses lat/lng if available, otherwise locality name */}
+                <div className="aspect-video w-full bg-muted">
+                  <iframe
+                    title="Property location"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={
+                      property.latitude != null && property.longitude != null
+                        ? `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.latitude},${property.longitude}&zoom=15`
+                        : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent((property.locality ?? "Mangalore") + ", Mangalore, Karnataka")}&zoom=13`
+                    }
+                    allowFullScreen
+                  />
                 </div>
-                {mapHref && (
-                  <Button variant="outline" size="sm" className="mt-3" asChild>
-                    <a href={mapHref} target="_blank" rel="noopener noreferrer">
-                      <MapPin className="size-3.5 mr-1.5" /> Open in Google Maps
-                    </a>
-                  </Button>
-                )}
+                <div className="p-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="size-5 text-muted-foreground mt-0.5 shrink-0" />
+                    <div>
+                      <div className="font-medium">{property.locality ?? "Mangalore"}</div>
+                      {property.addressLine && (
+                        <div className="mt-0.5 text-sm text-muted-foreground">{property.addressLine}</div>
+                      )}
+                    </div>
+                  </div>
+                  {mapHref && (
+                    <Button variant="outline" size="sm" className="mt-3" asChild>
+                      <a href={mapHref} target="_blank" rel="noopener noreferrer">
+                        <MapPin className="size-3.5 mr-1.5" /> Open in Google Maps
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 

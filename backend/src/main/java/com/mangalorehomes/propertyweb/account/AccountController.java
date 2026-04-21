@@ -12,17 +12,25 @@ import com.mangalorehomes.propertyweb.saved.SavedPropertyEntity;
 import com.mangalorehomes.propertyweb.saved.SavedPropertyRepository;
 import com.mangalorehomes.propertyweb.security.SecurityUser;
 import com.mangalorehomes.propertyweb.users.UserRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +46,7 @@ public class AccountController {
   private final EnquiryRepository enquiries;
   private final NotificationRepository notifications;
   private final UserRepository users;
+  private final PasswordEncoder passwordEncoder;
 
   public AccountController(
       SavedPropertyRepository saved,
@@ -45,13 +54,77 @@ public class AccountController {
       PropertyImageRepository propertyImages,
       EnquiryRepository enquiries,
       NotificationRepository notifications,
-      UserRepository users) {
+      UserRepository users,
+      PasswordEncoder passwordEncoder) {
     this.saved = saved;
     this.properties = properties;
     this.propertyImages = propertyImages;
     this.enquiries = enquiries;
     this.notifications = notifications;
     this.users = users;
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  // ── Profile ─────────────────────────────────────────────────────────
+
+  @GetMapping("/profile")
+  @Transactional(readOnly = true)
+  public Map<String, Object> getProfile(@AuthenticationPrincipal SecurityUser principal) {
+    var u = users.findById(principal.id()).orElseThrow();
+    var m = new LinkedHashMap<String, Object>();
+    m.put("id", u.id);
+    m.put("fullName", u.fullName);
+    m.put("email", u.email);
+    m.put("phone", u.phone);
+    m.put("businessName", u.businessName);
+    m.put("role", u.role != null ? u.role.name() : null);
+    m.put("isVerified", u.isVerified);
+    m.put("createdAt", u.createdAt);
+    return m;
+  }
+
+  public record UpdateProfileRequest(
+      @NotBlank(message = "Name is required.")
+      @Size(min = 2, message = "Name must be at least 2 characters.")
+      String fullName,
+
+      @Pattern(regexp = "^$|^\\d{10,15}$", message = "Phone must be 10–15 digits.")
+      String phone
+  ) {}
+
+  @PutMapping("/profile")
+  public Map<String, Object> updateProfile(
+      @AuthenticationPrincipal SecurityUser principal,
+      @Valid @RequestBody UpdateProfileRequest req) {
+    var u = users.findById(principal.id()).orElseThrow();
+    u.fullName = req.fullName().trim();
+    u.phone = (req.phone() == null || req.phone().isBlank()) ? u.phone : req.phone().trim();
+    u.updatedAt = Instant.now();
+    users.save(u);
+    return getProfile(principal);
+  }
+
+  public record ChangePasswordRequest(
+      @NotBlank(message = "Current password is required.")
+      String currentPassword,
+
+      @NotBlank(message = "New password is required.")
+      @Size(min = 8, message = "New password must be at least 8 characters.")
+      String newPassword
+  ) {}
+
+  @PostMapping("/profile/change-password")
+  public Map<String, Object> changePassword(
+      @AuthenticationPrincipal SecurityUser principal,
+      @Valid @RequestBody ChangePasswordRequest req) {
+    var u = users.findById(principal.id()).orElseThrow();
+    if (!passwordEncoder.matches(req.currentPassword(), u.passwordHash)) {
+      throw new IllegalArgumentException("Current password is incorrect.");
+    }
+    u.passwordHash = passwordEncoder.encode(req.newPassword());
+    u.updatedAt = Instant.now();
+    users.save(u);
+    return Map.of("message", "Password updated");
   }
 
   @GetMapping("/saved")

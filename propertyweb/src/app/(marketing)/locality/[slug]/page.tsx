@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicPropertyCard, type PublicPropertySummary } from "@/components/property/public-property-card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,15 @@ async function getLocalityListings(slug: string): Promise<PublicPropertySummary[
   } catch {
     return [];
   }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const loc = await getLocality(slug);
+  if (!loc) return { title: "Locality Not Found" };
+  const title = `Properties in ${loc.name}, Mangalore | MangaloreHomes`;
+  const description = `Browse verified properties in ${loc.name}, Mangalore. Apartments, villas, plots and more. Buy, rent or sell on MangaloreHomes.`;
+  return { title, description, openGraph: { title, description } };
 }
 
 export default async function LocalityPage({

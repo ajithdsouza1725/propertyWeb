@@ -64,6 +64,49 @@ public class MailNotificationService {
     }
   }
 
+  /** Notify seller their listing was approved. */
+  public void notifySellerListingApproved(String sellerEmail, String propertyTitle, String propertySlug) {
+    if (!enabled || sellerEmail == null || sellerEmail.isBlank()) {
+      log.info("[mail skipped] Listing approved '{}' — mail disabled or no email", propertyTitle);
+      return;
+    }
+    var mailSender = mailSenderProvider.getIfAvailable();
+    if (mailSender == null) return;
+    var frontendUrl = System.getProperty("app.mail.frontend-base-url", "http://localhost:3000");
+    var msg = new SimpleMailMessage();
+    msg.setFrom(from);
+    msg.setTo(sellerEmail);
+    msg.setSubject("Your listing is now live — " + propertyTitle);
+    msg.setText(
+        "Great news! Your listing \"" + propertyTitle + "\" has been approved and is now live.\n\n"
+            + "View it here: " + frontendUrl + "/property/" + propertySlug + "\n\n"
+            + "Buyers can now see your listing and submit enquiries.\n\n"
+            + "— MangaloreHomes");
+    try { mailSender.send(msg); }
+    catch (RuntimeException ex) { log.error("Failed to send listing-approved email", ex); }
+  }
+
+  /** Notify seller their listing was rejected. */
+  public void notifySellerListingRejected(String sellerEmail, String propertyTitle, String reason) {
+    if (!enabled || sellerEmail == null || sellerEmail.isBlank()) {
+      log.info("[mail skipped] Listing rejected '{}' — mail disabled or no email", propertyTitle);
+      return;
+    }
+    var mailSender = mailSenderProvider.getIfAvailable();
+    if (mailSender == null) return;
+    var msg = new SimpleMailMessage();
+    msg.setFrom(from);
+    msg.setTo(sellerEmail);
+    msg.setSubject("Listing update — " + propertyTitle);
+    msg.setText(
+        "Your listing \"" + propertyTitle + "\" needs some changes before it can go live.\n\n"
+            + "Reason: " + (reason != null ? reason : "Not specified") + "\n\n"
+            + "Please update your listing and resubmit from Seller → My Properties.\n\n"
+            + "— MangaloreHomes");
+    try { mailSender.send(msg); }
+    catch (RuntimeException ex) { log.error("Failed to send listing-rejected email", ex); }
+  }
+
   public void notifySellerLeadAssigned(long enquiryId, String sellerEmail, String propertyTitle) {
     if (!enabled || sellerEmail == null || sellerEmail.isBlank()) {
       log.info(

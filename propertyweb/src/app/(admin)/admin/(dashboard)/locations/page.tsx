@@ -92,7 +92,7 @@ export default function AdminLocationsPage() {
       {confirm.dialog}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Manage locations</h1>
+          <h1 className="text-2xl font-black tracking-tight md:text-3xl">Manage locations</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Add/edit localities, slugs, and featured localities.
           </p>

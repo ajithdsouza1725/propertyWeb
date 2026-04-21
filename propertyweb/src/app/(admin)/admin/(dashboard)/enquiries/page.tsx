@@ -122,7 +122,7 @@ export default function AdminEnquiriesPage() {
       {confirm.dialog}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Buyer Leads & Enquiries</h1>
+          <h1 className="text-2xl font-black tracking-tight md:text-3xl">Buyer Leads & Enquiries</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             All buyer enquiries come here first. Review and assign to sellers.
           </p>

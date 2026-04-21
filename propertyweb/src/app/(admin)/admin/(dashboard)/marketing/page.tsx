@@ -64,7 +64,7 @@ export default function AdminMarketingPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Marketing content</h1>
+      <h1 className="text-2xl font-black tracking-tight md:text-3xl">Marketing content</h1>
       <p className="text-sm text-muted-foreground">Banners, testimonials, and per-page SEO (database).</p>
 
       <Tabs defaultValue="banners">

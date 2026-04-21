@@ -308,7 +308,7 @@ export default function AdminUsersPage() {
       {confirm.dialog}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Manage Users</h1>
+          <h1 className="text-2xl font-black tracking-tight md:text-3xl">Manage Users</h1>
           <p className="mt-1 text-sm text-muted-foreground">Create, verify, block/unblock buyers, sellers and agents.</p>
         </div>
         <Button onClick={() => { setMode("create"); setEditing(null); setForm(emptyCreate()); setDialogOpen(true); }}>
