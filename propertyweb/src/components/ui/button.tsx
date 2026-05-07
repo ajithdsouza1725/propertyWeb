@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-primary-foreground shadow-sm ring-1 ring-transparent bg-[linear-gradient(90deg,var(--primary),var(--brand-2))] hover:brightness-110 hover:ring-primary/20 active:brightness-95",
+          "text-primary-foreground shadow-sm ring-1 ring-transparent bg-[linear-gradient(90deg,var(--primary),var(--accent))] hover:brightness-110 hover:ring-primary/20 active:brightness-95",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

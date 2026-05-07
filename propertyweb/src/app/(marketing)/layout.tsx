@@ -3,6 +3,7 @@ import { AdSenseScript } from "@/components/ads/adsense-script";
 import { CookieConsentBanner } from "@/components/consent/cookie-consent-banner";
 import { GoogleConsentBootstrap } from "@/components/consent/google-consent-bootstrap";
 import { CompareBar } from "@/components/property/compare-bar";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { API_BASE_URL } from "@/lib/api";
@@ -47,8 +48,9 @@ export default function MarketingLayout({
       <AdSenseScript />
       <CookieConsentBanner />
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-16 lg:pb-0">{children}</main>
       <CompareBar />
+      <MobileNav />
       <SiteFooter />
     </div>
   );

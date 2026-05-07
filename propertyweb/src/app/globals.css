@@ -36,17 +36,22 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
-  --color-brand-2: var(--brand-2);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent-soft: var(--accent-soft);
   --color-brand-deep: var(--brand-deep);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-surface: var(--surface);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* Radius system — 3 tiers only. Stop mixing rounded-xl/2xl/3xl randomly.
+  /* Radius system — 5 tiers.
      sm (8)   buttons/chips/inputs
      md (12)  cards/panels
-     lg (16)  hero surfaces / large cards */
+     lg (16)  hero surfaces / large cards
+     xl (20)  modals / featured cards
+     full     pills */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
@@ -56,86 +61,111 @@
   --radius-4xl: 2.5rem;
 }
 
-/* ── Palette — rich, committed ─────────────────────
-   Primary  : deep indigo (#253dad-ish) — the ONE brand color. CTAs, links, focus.
-   Brand-2  : antique gold (#d58d25-ish) — scarce accent. Featured/verified only.
-   Brand-deep: navy-black ink — dark sections + imagery overlay.
+/* ── Palette — Coastal Teal + Warm Amber ──────────────
+   Primary  : coastal teal (#0f7b6c-ish) — CTAs, links, focus.
+   Accent   : warm amber (#e8a020-ish) — featured, stars, scarce accent.
+   Brand-deep: dark slate — dark sections + footer.
    Everything else is a warm-tinted neutral. No decorative color — ever.
 */
 :root {
-  --background: oklch(0.985 0.006 80);
-  --surface:    oklch(0.965 0.008 80);
-  --foreground: oklch(0.14 0.015 265);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.14 0.015 265);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.14 0.015 265);
+  /* Primary — Coastal Teal */
+  --primary:            oklch(0.52 0.16 178);
+  --primary-foreground: oklch(1 0 0);
+  --primary-soft:       oklch(0.94 0.04 178);
 
-  --primary: oklch(0.42 0.18 268);
-  --primary-foreground: oklch(0.98 0 0);
+  /* Accent — Warm Amber */
+  --accent:             oklch(0.72 0.14 68);
+  --accent-foreground:  oklch(0.15 0.02 68);
+  --accent-soft:        oklch(0.96 0.04 68);
 
-  --secondary: oklch(0.96 0.006 80);
-  --secondary-foreground: oklch(0.22 0.015 265);
-  --muted: oklch(0.96 0.006 80);
-  --muted-foreground: oklch(0.50 0.012 265);
-  --accent: oklch(0.94 0.03 80);
-  --accent-foreground: oklch(0.22 0.015 265);
+  /* Surfaces */
+  --background:         oklch(0.987 0.003 80);
+  --surface:            oklch(0.968 0.004 80);
+  --card:               oklch(1 0 0);
+  --card-foreground:    oklch(0.13 0.02 265);
+  --popover:            oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.02 265);
+  --brand-deep:         oklch(0.12 0.025 220);
 
-  --brand-2:    oklch(0.70 0.14 70);
-  --brand-deep: oklch(0.12 0.025 265);
+  /* Text */
+  --foreground:         oklch(0.13 0.02 265);
+  --muted-foreground:   oklch(0.52 0.01 265);
 
-  --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.90 0.012 270);
-  --input: oklch(0.90 0.012 270);
-  --ring: oklch(0.42 0.16 268);
-  --radius: 0.75rem;
+  /* Secondary / Muted */
+  --secondary:          oklch(0.968 0.004 80);
+  --secondary-foreground: oklch(0.13 0.02 265);
+  --muted:              oklch(0.968 0.004 80);
 
-  --chart-1: oklch(0.42 0.18 268);
-  --chart-2: oklch(0.56 0.14 205);
-  --chart-3: oklch(0.70 0.14 70);
-  --chart-4: oklch(0.55 0.16 155);
+  /* Structure */
+  --border:             oklch(0.91 0.005 265);
+  --input:              oklch(0.96 0.004 80);
+  --ring:               oklch(0.52 0.16 178);
+
+  /* Semantic */
+  --success:            oklch(0.60 0.15 145);
+  --warning:            oklch(0.72 0.14 68);
+  --destructive:        oklch(0.55 0.20 25);
+
+  /* Charts */
+  --chart-1: oklch(0.52 0.16 178);
+  --chart-2: oklch(0.60 0.15 145);
+  --chart-3: oklch(0.72 0.14 68);
+  --chart-4: oklch(0.55 0.16 280);
   --chart-5: oklch(0.62 0.18 30);
 
-  --sidebar: oklch(0.98 0.006 80);
-  --sidebar-foreground: oklch(0.14 0.015 265);
-  --sidebar-primary: oklch(0.42 0.18 268);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.94 0.012 270);
-  --sidebar-accent-foreground: oklch(0.22 0.015 265);
-  --sidebar-border: oklch(0.90 0.012 270);
-  --sidebar-ring: oklch(0.42 0.16 268);
+  /* Sidebar */
+  --sidebar:                  oklch(0.987 0.003 80);
+  --sidebar-foreground:       oklch(0.13 0.02 265);
+  --sidebar-primary:          oklch(0.52 0.16 178);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent:           oklch(0.94 0.04 178);
+  --sidebar-accent-foreground: oklch(0.13 0.02 265);
+  --sidebar-border:           oklch(0.91 0.005 265);
+  --sidebar-ring:             oklch(0.52 0.16 178);
+
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: oklch(0.10 0.01 260);
-  --surface:    oklch(0.13 0.01 260);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.15 0.01 260);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.15 0.01 260);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.66 0.18 268);
+  --primary:            oklch(0.66 0.16 178);
   --primary-foreground: oklch(0.10 0 0);
-  --secondary: oklch(0.22 0.01 260);
+  --primary-soft:       oklch(0.20 0.04 178);
+
+  --accent:             oklch(0.78 0.14 68);
+  --accent-foreground:  oklch(0.10 0.02 68);
+  --accent-soft:        oklch(0.18 0.04 68);
+
+  --background:         oklch(0.10 0.01 220);
+  --surface:            oklch(0.13 0.01 220);
+  --card:               oklch(0.15 0.01 220);
+  --card-foreground:    oklch(0.97 0 0);
+  --popover:            oklch(0.15 0.01 220);
+  --popover-foreground: oklch(0.97 0 0);
+  --brand-deep:         oklch(0.09 0.02 220);
+
+  --foreground:         oklch(0.97 0 0);
+  --muted-foreground:   oklch(0.65 0.01 220);
+
+  --secondary:          oklch(0.20 0.01 220);
   --secondary-foreground: oklch(0.97 0 0);
-  --muted: oklch(0.22 0.01 260);
-  --muted-foreground: oklch(0.65 0.01 260);
-  --accent: oklch(0.25 0.02 85);
-  --accent-foreground: oklch(0.97 0 0);
-  --brand-2:    oklch(0.78 0.14 70);
-  --brand-deep: oklch(0.09 0.02 265);
-  --destructive: oklch(0.70 0.20 22);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.66 0.16 268);
-  --sidebar: oklch(0.15 0.01 260);
-  --sidebar-foreground: oklch(0.97 0 0);
-  --sidebar-primary: oklch(0.66 0.18 268);
+  --muted:              oklch(0.20 0.01 220);
+
+  --border:             oklch(1 0 0 / 10%);
+  --input:              oklch(1 0 0 / 12%);
+  --ring:               oklch(0.66 0.16 178);
+
+  --success:            oklch(0.70 0.15 145);
+  --warning:            oklch(0.78 0.14 68);
+  --destructive:        oklch(0.70 0.20 22);
+
+  --sidebar:                  oklch(0.15 0.01 220);
+  --sidebar-foreground:       oklch(0.97 0 0);
+  --sidebar-primary:          oklch(0.66 0.16 178);
   --sidebar-primary-foreground: oklch(0.10 0 0);
-  --sidebar-accent: oklch(0.22 0.01 260);
+  --sidebar-accent:           oklch(0.20 0.01 220);
   --sidebar-accent-foreground: oklch(0.97 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.52 0.01 260);
+  --sidebar-border:           oklch(1 0 0 / 10%);
+  --sidebar-ring:             oklch(0.52 0.01 220);
 }
 
 @layer base {
@@ -146,38 +176,92 @@
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv11", "ss01", "ss03";
     font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  /* Global smooth transitions on all interactive elements */
+  a, button, input, select, textarea,
+  [role="button"], [role="tab"], [role="link"] {
+    transition: color 0.2s ease, background-color 0.2s ease,
+                border-color 0.2s ease, box-shadow 0.2s ease,
+                opacity 0.2s ease, transform 0.15s ease;
+  }
+  img, video {
+    transition: transform 0.5s ease, opacity 0.3s ease;
   }
   /* Keyboard-only focus ring on all interactive elements */
   :where(a, button, input, select, textarea, [role="button"]):focus-visible {
-    @apply outline-none ring-[3px] ring-ring/40 ring-offset-0;
+    @apply outline-none ring-2 ring-primary/30 ring-offset-0;
   }
   h1, h2, h3, h4 {
     @apply tracking-tight;
     letter-spacing: -0.015em;
+    text-wrap: balance;
   }
-  /* Display headlines tighten even more — magazine-feel */
+  p {
+    text-wrap: pretty;
+  }
+  /* Display headlines — editorial tightening with safe line-height */
   .display-headline {
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
     font-weight: 900;
-    line-height: 0.95;
+    line-height: 1.08;
   }
-  /* Eyebrow — the small uppercase tag above section titles */
+  /* Section heading — standard h2 treatment */
+  .section-heading {
+    @apply font-bold tracking-tight;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  /* Lead paragraph — readable body under headings */
+  .lead {
+    @apply text-base text-muted-foreground;
+    line-height: 1.65;
+    max-width: 68ch;
+  }
+  /* Eyebrow — small uppercase tag above section titles */
   .eyebrow {
-    @apply text-[11px] font-bold uppercase text-primary/80;
-    letter-spacing: 0.18em;
+    @apply text-[11px] font-bold uppercase text-primary;
+    letter-spacing: 0.14em;
+    white-space: nowrap;
+  }
+  /* Pill — badges that must not wrap */
+  .pill {
+    white-space: nowrap;
+    flex: none;
   }
 }
 
+/* ── Shadow Scale ──────────────────────────────────────
+   shadow-card   resting elevation for cards
+   shadow-lift   hover/interactive state
+   shadow-button CTA buttons
+   shadow-modal  modals/dropdowns */
+.shadow-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+}
+.shadow-lift {
+  box-shadow: 0 8px 24px rgba(15,123,108,0.10), 0 2px 8px rgba(0,0,0,0.06);
+}
+.shadow-button {
+  box-shadow: 0 2px 12px rgba(15,123,108,0.25);
+}
+.shadow-modal {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
 /* ── Motion ─────────────────────────────────────────
-   Scroll-triggered animations use .animate-on-scroll
-   which is activated by IntersectionObserver (see below).
-   Stagger children with animation-delay via CSS vars. */
+   Scroll-triggered animations use .scroll-animate
+   which is activated by IntersectionObserver.
+   Stagger children via data-delay. */
 
 @keyframes fade-up {
-  0%   { opacity: 0; transform: translateY(18px); }
+  0%   { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes fade-in {
@@ -189,101 +273,83 @@
   100% { opacity: 1; transform: translateX(0); }
 }
 @keyframes scale-in {
-  0%   { opacity: 0; transform: scale(0.92); }
+  0%   { opacity: 0; transform: scale(0.95); }
   100% { opacity: 1; transform: scale(1); }
 }
-@keyframes slide-up-fade {
-  0%   { opacity: 0; transform: translateY(24px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes shimmer-bg {
+@keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position: 200% 0; }
 }
-@keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 var(--ring); }
-  70%  { box-shadow: 0 0 0 12px transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
-}
-@keyframes float {
+@keyframes bounce-down {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
-}
-@keyframes count-up {
-  0%   { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
+  50%      { transform: translateY(6px); }
 }
 
-/* Direct animation classes */
-.animate-fade-up    { animation: fade-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-fade-in    { animation: fade-in 0.4s ease forwards; }
-.animate-fade-left  { animation: fade-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-scale-in   { animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-pulse-ring { animation: pulse-ring 2s infinite; }
-.animate-float      { animation: float 3s ease-in-out infinite; }
+/* Direct animation classes — smooth spring-like easing */
+.animate-fade-up    { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.animate-fade-in    { animation: fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.animate-fade-left  { animation: fade-left 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.animate-scale-in   { animation: scale-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.animate-bounce-down { animation: bounce-down 2.5s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
 
 /* ── Scroll-triggered animations ─────────────────────
    Add .scroll-animate to any element. It starts invisible
    and animates in when it enters the viewport.
-   Use data-delay="1" through data-delay="6" for stagger. */
+   Use data-delay="100" through data-delay="500" for stagger. */
 .scroll-animate {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 .scroll-animate.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
-.scroll-animate[data-delay="1"] { transition-delay: 0.05s; }
-.scroll-animate[data-delay="2"] { transition-delay: 0.10s; }
-.scroll-animate[data-delay="3"] { transition-delay: 0.15s; }
-.scroll-animate[data-delay="4"] { transition-delay: 0.20s; }
-.scroll-animate[data-delay="5"] { transition-delay: 0.25s; }
-.scroll-animate[data-delay="6"] { transition-delay: 0.30s; }
+.scroll-animate[data-delay="100"] { transition-delay: 0.1s; }
+.scroll-animate[data-delay="200"] { transition-delay: 0.2s; }
+.scroll-animate[data-delay="300"] { transition-delay: 0.3s; }
+.scroll-animate[data-delay="400"] { transition-delay: 0.4s; }
+.scroll-animate[data-delay="500"] { transition-delay: 0.5s; }
 
 /* Scale variant */
 .scroll-animate-scale {
   opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.95);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 .scroll-animate-scale.is-visible {
   opacity: 1;
   transform: scale(1);
 }
 
-/* ── Hover micro-interactions ────────────────────────
-   Subtle scale + glow for interactive elements. */
-.hover-glow {
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
+/* ── Card hover ─────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease;
+  will-change: transform;
 }
-.hover-glow:hover {
-  box-shadow: 0 0 20px color-mix(in oklch, var(--primary) 30%, transparent);
-  transform: translateY(-2px);
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(15,123,108,0.12), 0 4px 12px rgba(0,0,0,0.06);
+}
+.card-hover:active {
+  transform: translateY(-1px);
 }
 
-/* Button press effect */
+/* ── Button press effect ────────────────────────────── */
 .press-effect {
-  transition: transform 0.15s ease;
+  transition: transform 100ms ease;
 }
 .press-effect:active {
   transform: scale(0.97);
 }
 
-/* Gradient text animation — slow sweep */
-.text-gradient-animate {
-  background: linear-gradient(90deg, var(--primary), var(--brand-2), var(--primary));
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer-bg 4s linear infinite;
-}
-
-/* Underline animation on hover */
+/* ── Hover underline animation ──────────────────────── */
 .hover-underline {
   position: relative;
 }
@@ -295,6 +361,7 @@
   width: 0;
   height: 2px;
   background: var(--primary);
+  border-radius: 1px;
   transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .hover-underline:hover::after {
@@ -310,75 +377,10 @@
     color-mix(in oklch, var(--muted) 60%, transparent) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer-bg 1.6s linear infinite;
+  animation: shimmer 1.5s linear infinite;
 }
 
-/* ── Glass (overlays on imagery) ───────────────────── */
-.glass {
-  background: color-mix(in oklch, var(--card) 72%, transparent);
-  backdrop-filter: blur(18px) saturate(1.3);
-  border: 1px solid color-mix(in oklch, var(--card) 50%, transparent);
-}
-
-/* ── Card hover (used on clickable cards everywhere) ─ */
-.card-hover {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.3s ease;
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 16px 32px -12px color-mix(in oklch, var(--primary) 22%, transparent),
-    0 4px 12px -4px color-mix(in oklch, black 8%, transparent);
-}
-.card-hover:active {
-  transform: translateY(-1px);
-}
-
-/* ── Subtle brand gradient border (reserved for FEATURED) ─ */
-.gradient-border {
-  position: relative;
-}
-.gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: linear-gradient(135deg, var(--primary), var(--brand-2));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* ── Shadow scale (2 tiers — soft for rest, lift for hover/CTA) ─ */
-.shadow-soft {
-  box-shadow: 0 1px 2px oklch(0 0 0 / 4%), 0 4px 12px oklch(0 0 0 / 4%);
-}
-.shadow-lift {
-  box-shadow:
-    0 4px 10px -2px oklch(0 0 0 / 6%),
-    0 12px 28px -8px color-mix(in oklch, var(--primary) 14%, transparent);
-}
-
-/* ── Hero mesh — architectural, not cartoon blob ────
-   Multiple radial gradients baked into the bg so there's
-   no per-element blob element cluttering the markup. */
-.hero-mesh {
-  background-color: var(--brand-deep);
-  background-image:
-    radial-gradient(ellipse 55% 40% at 18% 10%,  color-mix(in oklch, var(--primary) 40%, transparent) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 85% 85%,  color-mix(in oklch, var(--brand-2) 30%, transparent) 0%, transparent 65%),
-    radial-gradient(ellipse 80% 50% at 50% 120%, color-mix(in oklch, var(--primary) 30%, transparent) 0%, transparent 70%);
-  background-attachment: fixed;
-}
-@media (max-width: 768px) {
-  .hero-mesh { background-attachment: scroll; }
-}
-
-/* ── Subtle noise texture — adds tactile depth to dark surfaces ─ */
+/* ── Noise texture (for dark surfaces) ───────────────── */
 .noise {
   position: relative;
   isolation: isolate;
@@ -393,10 +395,26 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ── Scrollbar hide ──────────────────────────────────── */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-in,
-  .animate-pulse-ring,
+  .animate-bounce-down,
   .skeleton { animation: none; }
   .card-hover { transition: none; }
+  .scroll-animate,
+  .scroll-animate-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

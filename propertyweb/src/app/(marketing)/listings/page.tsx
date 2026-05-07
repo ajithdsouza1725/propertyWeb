@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch, getApiErrorMessage } from "@/lib/api";
 import { parseBudgetToPriceRange } from "@/lib/budget-parse";
 import type { PageResponse } from "@/lib/page-response";
+import { SAMPLE_LISTINGS } from "@/lib/sample-data";
 import { SearchX, ChevronLeft, ChevronRight, Home } from "lucide-react";
 
 type SP = Record<string, string | string[] | undefined>;
@@ -18,7 +19,7 @@ function first(v: string | string[] | undefined) {
 
 function purposeLabel(p?: string) {
   if (!p) return null;
-  const m: Record<string, string> = { buy: "Buy", sell: "Sell", rent: "Rent" };
+  const m: Record<string, string> = { buy: "Buy", rent: "Rent" };
   return m[p.toLowerCase()] ?? p;
 }
 
@@ -54,6 +55,27 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
     payload = await apiFetch<PageResponse<PublicPropertySummary>>(`/api/public/properties?${params.toString()}`);
   } catch (e: unknown) {
     fetchError = getApiErrorMessage(e, "Could not load listings. Is the API running?");
+
+    // Fallback: filter sample data client-side when API is offline
+    let filtered = SAMPLE_LISTINGS as PublicPropertySummary[];
+    if (purpose) filtered = filtered.filter((p) => p.purpose === purpose);
+    if (locality) filtered = filtered.filter((p) => p.localitySlug === locality);
+    if (type) filtered = filtered.filter((p) => p.propertyTypeSlug === type);
+    if (q) filtered = filtered.filter((p) => p.title.toLowerCase().includes(q) || (p.locality ?? "").toLowerCase().includes(q));
+    if (minPrice != null) filtered = filtered.filter((p) => p.price >= minPrice);
+    if (maxPrice != null) filtered = filtered.filter((p) => p.price <= maxPrice);
+    if (minBedrooms) filtered = filtered.filter((p) => (p.bedrooms ?? 0) >= Number(minBedrooms));
+
+    const startIdx = page * 12;
+    const sliced = filtered.slice(startIdx, startIdx + 12);
+    payload = {
+      content: sliced,
+      totalElements: filtered.length,
+      totalPages: Math.ceil(filtered.length / 12),
+      number: page,
+      size: 12,
+    };
+    fetchError = null; // Don't show error since we have sample data
   }
 
   const rows = payload.content ?? [];
@@ -93,7 +115,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
     <div className="min-h-screen bg-background">
       {/* Page header — quiet, trustworthy; not shouty */}
       <div className="border-b bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             <Link href="/" className="inline-flex items-center gap-1 hover:text-foreground">
               <Home className="size-3.5" /> Home
@@ -110,7 +132,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
 
           <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-black tracking-tight md:text-3xl">
+              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
                 {purpose ? `Properties to ${purposeLabel(purpose)}` : "All properties"}
                 {locality ? ` in ${locality}` : " in Mangalore"}
               </h1>
@@ -137,7 +159,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
           {activeFilters.length > 0 && (
             <div className="mt-4 flex flex-wrap items-center gap-2">
               {activeFilters.map((f) => (
-                <Badge key={f.label} variant="secondary" className="rounded-full px-3 py-1 text-xs font-medium">
+                <Badge key={f.label} className="rounded-full bg-primary-soft text-primary px-3 py-1 text-xs font-medium">
                   {f.label}
                 </Badge>
               ))}
@@ -153,7 +175,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
       </div>
 
       {fetchError && (
-        <div className="mx-auto max-w-7xl px-4 pt-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
           <div
             role="alert"
             className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive"
@@ -163,7 +185,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
         </div>
       )}
 
-      <div className="mx-auto max-w-7xl px-4 py-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Filters sidebar */}
           <aside className="lg:col-span-3">
@@ -194,13 +216,13 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
                     </div>
                     <div className="flex items-center gap-2">
                       {page > 0 ? (
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" className="rounded-xl" asChild>
                           <Link href={pageHref(page - 1)}>
                             <ChevronLeft className="size-4 mr-1" /> Previous
                           </Link>
                         </Button>
                       ) : (
-                        <Button variant="outline" size="sm" disabled>
+                        <Button variant="outline" size="sm" className="rounded-xl" disabled>
                           <ChevronLeft className="size-4 mr-1" /> Previous
                         </Button>
                       )}
@@ -213,7 +235,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
                               key={pg}
                               variant={pg === page ? "default" : "outline"}
                               size="sm"
-                              className="w-9 p-0"
+                              className="w-9 p-0 rounded-xl"
                               asChild={pg !== page}
                             >
                               {pg !== page ? (
@@ -226,13 +248,13 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
                         })}
                       </div>
                       {page < totalPages - 1 ? (
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" className="rounded-xl" asChild>
                           <Link href={pageHref(page + 1)}>
                             Next <ChevronRight className="size-4 ml-1" />
                           </Link>
                         </Button>
                       ) : (
-                        <Button variant="outline" size="sm" disabled>
+                        <Button variant="outline" size="sm" className="rounded-xl" disabled>
                           Next <ChevronRight className="size-4 ml-1" />
                         </Button>
                       )}
@@ -242,7 +264,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Pro
               </>
             ) : (
               <div className="rounded-2xl border border-dashed bg-card/50 px-6 py-20 text-center">
-                <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-muted">
+                <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-soft">
                   <SearchX className="size-7 text-muted-foreground" />
                 </div>
                 <h3 className="mt-4 text-base font-semibold">No properties match your filters</h3>

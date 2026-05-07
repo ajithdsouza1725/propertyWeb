@@ -12,15 +12,17 @@ export function mediaAbsoluteUrl(pathOrUrl: string): string {
 }
 
 /** Multipart upload to `POST /api/seller/uploads` (field name `file`). */
-export async function apiUploadSellerFile(token: string, file: File): Promise<{ url: string }> {
-  const url = `${API_BASE_URL}/api/seller/uploads`;
+export async function apiUploadSellerFile(
+  _token: string | null,
+  file: File
+): Promise<{ url: string }> {
+  // Routes through the Next.js backend proxy — cookie handles auth.
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch(url, {
+  const res = await fetch("/api/backend/api/seller/uploads", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
     body: fd,
-    cache: "no-store",
+    credentials: "same-origin",
   });
   if (!res.ok) {
     let message = `Upload failed (${res.status})`;
@@ -60,6 +62,16 @@ export function getApiErrorMessage(e: unknown, fallback = "Something went wrong"
   return fallback;
 }
 
+/**
+ * Core fetch wrapper.
+ *
+ * Routing:
+ *  - **Client-side, no explicit token** → routes through `/api/backend/…`
+ *    (the proxy reads the httpOnly cookie and forwards as Bearer header).
+ *  - **Server-side, explicit token** → calls Spring Boot directly with Bearer.
+ *  - **Server-side, no token** → calls Spring Boot without auth (public endpoints).
+ *  - **Full URL** → used as-is.
+ */
 export async function apiFetch<T>(
   path: string,
   opts?: {
@@ -69,19 +81,40 @@ export async function apiFetch<T>(
     noJson?: boolean;
   }
 ): Promise<T> {
-  const url = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+  const isClient = typeof window !== "undefined";
+  const hasExplicitToken =
+    opts?.token != null &&
+    opts.token.trim() !== "" &&
+    opts.token !== "cookie"; // "cookie" sentinel = use proxy
+
+  let url: string;
+
+  if (path.startsWith("http")) {
+    // Absolute URL — use as-is
+    url = path;
+  } else if (isClient && !hasExplicitToken) {
+    // Client-side: route through Next.js backend proxy
+    // path is like "/api/public/properties" → proxy at "/api/backend/api/public/properties"
+    url = `/api/backend${path}`;
+  } else {
+    // Server-side: call Spring Boot directly
+    url = `${API_BASE_URL}${path}`;
+  }
+
+  const headers: Record<string, string> = {};
+  if (!opts?.noJson) headers["Content-Type"] = "application/json";
+  if (hasExplicitToken) headers["Authorization"] = `Bearer ${opts!.token}`;
+
   const res = await fetch(url, {
     method: opts?.method ?? (opts?.body ? "POST" : "GET"),
-    headers: {
-      ...(opts?.noJson ? {} : { "Content-Type": "application/json" }),
-      ...(opts?.token ? { Authorization: `Bearer ${opts.token}` } : {}),
-    },
+    headers,
     body: opts?.body ? JSON.stringify(opts.body) : undefined,
     cache: "no-store",
+    ...(isClient ? { credentials: "same-origin" as RequestCredentials } : {}),
   });
 
   if (!res.ok) {
-    let payload: any = null;
+    let payload: Record<string, unknown> | null = null;
     try {
       payload = await res.json();
     } catch {
@@ -89,8 +122,8 @@ export async function apiFetch<T>(
     }
     const err: ApiError = {
       status: res.status,
-      error: payload?.error ?? "Error",
-      message: payload?.message ?? `Request failed (${res.status})`,
+      error: (payload?.error as string) ?? "Error",
+      message: (payload?.message as string) ?? `Request failed (${res.status})`,
       details: payload?.details,
     };
     throw err;
@@ -99,17 +132,36 @@ export async function apiFetch<T>(
   return (await res.json()) as T;
 }
 
-/** Download binary/text (e.g. CSV export). Bearer header omitted when {@code token} is empty. */
+/** Download binary/text (e.g. CSV export). */
 export async function apiDownload(
   path: string,
   opts: { token?: string | null; filename: string }
 ): Promise<void> {
-  const url = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+  const isClient = typeof window !== "undefined";
+  const hasExplicitToken =
+    opts.token != null &&
+    opts.token.trim() !== "" &&
+    opts.token !== "cookie";
+
+  let url: string;
+  if (path.startsWith("http")) {
+    url = path;
+  } else if (isClient && !hasExplicitToken) {
+    url = `/api/backend${path}`;
+  } else {
+    url = `${API_BASE_URL}${path}`;
+  }
+
+  const headers: Record<string, string> = {};
+  if (hasExplicitToken) headers["Authorization"] = `Bearer ${opts.token!.trim()}`;
+
   const res = await fetch(url, {
     method: "GET",
-    headers: opts.token?.trim() ? { Authorization: `Bearer ${opts.token.trim()}` } : {},
+    headers,
     cache: "no-store",
+    ...(isClient ? { credentials: "same-origin" as RequestCredentials } : {}),
   });
+
   if (!res.ok) {
     let message = `Request failed (${res.status})`;
     try {
@@ -128,4 +180,3 @@ export async function apiDownload(
   a.click();
   URL.revokeObjectURL(href);
 }
-

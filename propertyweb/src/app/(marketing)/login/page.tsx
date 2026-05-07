@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { apiFetch, getApiErrorMessage } from "@/lib/api";
-import { setAccessToken } from "@/lib/auth";
+import { getApiErrorMessage } from "@/lib/api";
+import { notifyAuthChanged } from "@/lib/auth";
 import { redirectPathForRole } from "@/components/auth/role-login-form";
 import {
   Home,
@@ -40,16 +40,23 @@ export default function MainLoginPage() {
     setLoading(true);
     setError(null);
     try {
-      // Unified sign-in: one door for every role. After auth we look up the
-      // role and route to the matching dashboard (buyer→/account,
-      // owner/agent→/seller, admin→/admin).
-      const res = await apiFetch<{ accessToken: string }>("/api/auth/login", {
-        body: { identifier: identifier.trim(), password: password.trim() },
+      // Call Next.js auth proxy — sets httpOnly cookie.
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: identifier.trim(),
+          password: password.trim(),
+        }),
       });
-      const me = await apiFetch<{ role: string }>("/api/auth/me", { token: res.accessToken });
-      setAccessToken(res.accessToken);
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setError(data.error ?? "Login failed. Check your email/phone and password.");
+        return;
+      }
+      notifyAuthChanged();
       router.refresh();
-      router.push(redirectPathForRole(me.role ?? ""));
+      router.push(redirectPathForRole(data.role ?? ""));
     } catch (e: unknown) {
       setError(getApiErrorMessage(e, "Login failed. Check your email/phone and password."));
     } finally {
@@ -63,7 +70,7 @@ export default function MainLoginPage() {
       <aside className="relative hidden w-[45%] shrink-0 flex-col justify-between overflow-hidden bg-brand-deep p-12 lg:flex">
         {/* Decorative ambient glow — single soft tone, no rainbow */}
         <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 size-96 rounded-full bg-primary/15 blur-[90px]" />
-        <div aria-hidden className="pointer-events-none absolute -bottom-10 left-16 size-64 rounded-full bg-brand-2/10 blur-[70px]" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-10 left-16 size-64 rounded-full bg-accent/10 blur-[70px]" />
 
         {/* Logo */}
         <div className="relative flex items-center gap-2.5">

@@ -29,7 +29,7 @@ export function RecentlyViewedStrip() {
           <Link
             key={item.slug}
             href={`/property/${item.slug}`}
-            className="flex-none rounded-xl border bg-card px-4 py-2.5 text-sm font-medium shadow-soft transition-colors hover:border-primary/30 hover:text-primary"
+            className="flex-none rounded-xl border bg-card px-4 py-2.5 text-sm font-medium shadow-card transition-colors hover:border-primary/30 hover:text-primary"
           >
             <span className="line-clamp-1 max-w-[200px]">{item.title}</span>
           </Link>

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { apiFetch, getApiErrorMessage } from "@/lib/api";
-import { setAccessToken } from "@/lib/auth";
+import { getApiErrorMessage } from "@/lib/api";
+import { notifyAuthChanged } from "@/lib/auth";
 import {
   Building2,
   Eye,
@@ -48,7 +48,7 @@ const WRONG_ROLE_MESSAGE: Record<Exclude<LoginGate, "any">, string> = {
 const GATE_CONFIG: Record<LoginGate, { icon: React.ElementType; badgeClass: string; sublabel: string }> = {
   any:    { icon: Building2,   badgeClass: "bg-primary text-primary-foreground",      sublabel: "Sign in to continue" },
   buyer:  { icon: Home,        badgeClass: "bg-primary text-primary-foreground",      sublabel: "Browse saved properties & track enquiries" },
-  seller: { icon: Building2,   badgeClass: "bg-brand-2 text-white",                    sublabel: "Manage listings & buyer leads" },
+  seller: { icon: Building2,   badgeClass: "bg-accent text-white",                    sublabel: "Manage listings & buyer leads" },
   admin:  { icon: ShieldCheck, badgeClass: "bg-brand-deep text-white ring-1 ring-white/10", sublabel: "Platform management & approvals" },
 };
 
@@ -80,21 +80,31 @@ export function RoleLoginForm({
     setLoading(true);
     setError(null);
     try {
-      // Trim both — browser autofill/autocomplete occasionally injects trailing
-      // whitespace which is invisible to the user but breaks the bcrypt compare.
-      const res = await apiFetch<{ accessToken: string }>("/api/auth/login", {
-        body: { identifier: identifier.trim(), password: password.trim() },
+      // Call Next.js auth proxy — sets httpOnly cookie on success.
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: identifier.trim(),
+          password: password.trim(),
+        }),
       });
-      const me = await apiFetch<{ role: string }>("/api/auth/me", { token: res.accessToken });
-      const roleNorm = (me.role ?? "").toLowerCase();
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setError(data.error ?? "Login failed. Check your credentials.");
+        return;
+      }
+      const roleNorm = (data.role ?? "").toLowerCase();
       if (gate !== "any") {
         const allowed = ALLOWED_ROLES[gate];
         if (!allowed.includes(roleNorm)) {
           setError(WRONG_ROLE_MESSAGE[gate]);
+          // Logout since wrong role
+          await fetch("/api/auth/logout", { method: "POST" });
           return;
         }
       }
-      setAccessToken(res.accessToken);
+      notifyAuthChanged();
       const dest = gate === "any" ? redirectPathForRole(roleNorm) : REDIRECT[gate];
       router.refresh();
       router.push(dest);

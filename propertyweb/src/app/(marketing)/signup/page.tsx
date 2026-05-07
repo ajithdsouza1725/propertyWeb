@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { apiFetch, getApiErrorMessage } from "@/lib/api";
-import { setAccessToken } from "@/lib/auth";
+import { notifyAuthChanged } from "@/lib/auth";
 import {
   Home,
   Building2,
@@ -125,7 +125,8 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await apiFetch<{ accessToken: string }>("/api/auth/signup", {
+      // Call Spring Boot signup via proxy, then login to get httpOnly cookie
+      await apiFetch<unknown>("/api/auth/signup", {
         body: {
           fullName: fullName.trim(),
           email: email.trim() || null,
@@ -134,13 +135,27 @@ export default function SignupPage() {
           role: cfg.role,
         },
       });
-      setAccessToken(res.accessToken);
+      // Auto-login after signup
+      const loginRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: (email.trim() || phone.trim()),
+          password,
+        }),
+      });
+      const loginData = await loginRes.json();
+      if (!loginRes.ok) {
+        setError(loginData.error ?? "Signup succeeded but login failed.");
+        return;
+      }
+      notifyAuthChanged();
       setSuccess(true);
-      const me = await apiFetch<{ role: string }>("/api/auth/me", { token: res.accessToken });
       router.refresh();
-      if (me.role === "admin") router.push("/admin");
-      else if (me.role === "owner" || me.role === "agent") router.push("/seller");
-      else router.push("/account");
+      const role = (loginData.role ?? "").toLowerCase();
+      if (role === "admin") router.push("/admin");
+      else if (role === "owner" || role === "agent") router.push("/seller");
+      else router.push("/");
     } catch (e: unknown) {
       setError(getApiErrorMessage(e, "Sign up failed. Try a different email or phone."));
     } finally {
@@ -163,7 +178,7 @@ export default function SignupPage() {
           {(Object.entries(PATH_CONFIG) as [Path, typeof PATH_CONFIG.buyer][]).map(([key, c]) => {
             const Ic = c.icon;
             const active = path === key;
-            const accentClass = c.accent === "gold" ? "text-brand-2" : "text-primary";
+            const accentClass = c.accent === "gold" ? "text-accent" : "text-primary";
             return (
               <button
                 key={key}
@@ -174,7 +189,7 @@ export default function SignupPage() {
                   "flex flex-col items-start gap-3 rounded-2xl border bg-card p-4 text-left transition-all",
                   active
                     ? "border-primary shadow-lift ring-1 ring-primary"
-                    : "border-border shadow-soft hover:border-primary/30",
+                    : "border-border shadow-card hover:border-primary/30",
                 ].join(" ")}
               >
                 <div
@@ -205,7 +220,7 @@ export default function SignupPage() {
         </ul>
 
         {/* Form */}
-        <div className="rounded-2xl border bg-card p-6 shadow-soft md:p-7">
+        <div className="rounded-2xl border bg-card p-6 shadow-card md:p-7">
           {error && (
             <div
               role="alert"

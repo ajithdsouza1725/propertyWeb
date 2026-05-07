@@ -212,7 +212,7 @@ export function AppTopbar({ placeholder }: { placeholder?: string }) {
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex size-9 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground shadow-soft transition-all hover:opacity-90"
+              className="flex size-9 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground shadow-card transition-all hover:opacity-90"
             >
               {userInitials || <User className="size-4" />}
             </button>

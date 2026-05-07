@@ -1,41 +1,80 @@
 "use client";
 
-import { useLayoutEffect, useState, useSyncExternalStore } from "react";
-import { ACCESS_TOKEN_CHANGED_EVENT, getAccessToken } from "@/lib/auth";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { AUTH_CHANGED_EVENT } from "@/lib/auth";
+
+export type AuthUser = {
+  id?: number;
+  email?: string;
+  role: string;
+  [key: string]: unknown;
+};
+
+export type AuthState = {
+  /** null = not logged in, object = logged in */
+  user: AuthUser | null;
+  /** true while initial /api/auth/me fetch is in flight */
+  loading: boolean;
+};
 
 /**
- * True after the first client pass — runs in useLayoutEffect so we avoid an extra painted frame
- * before treating `useAccessToken() === null` as “logged out”.
+ * True after first client render. Use to guard hydration-sensitive
+ * UI before treating auth state as authoritative.
  */
 export function useHydrated(): boolean {
-  const [ready, setReady] = useState(false);
-  useLayoutEffect(() => setReady(true), []);
-  return ready;
-}
-
-function subscribe(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  const run = () => onStoreChange();
-  window.addEventListener(ACCESS_TOKEN_CHANGED_EVENT, run);
-  window.addEventListener("storage", run);
-  return () => {
-    window.removeEventListener(ACCESS_TOKEN_CHANGED_EVENT, run);
-    window.removeEventListener("storage", run);
-  };
-}
-
-function getServerSnapshot() {
-  return null as string | null;
-}
-
-function getSnapshot() {
-  return getAccessToken();
+  const [hydrated, setHydrated] = useState(false);
+  useLayoutEffect(() => setHydrated(true), []);
+  return hydrated;
 }
 
 /**
- * Reads the JWT from localStorage in a hydration-safe way (matches server snapshot, then updates).
- * Re-renders when {@link import("./auth").setAccessToken} / clear runs (same tab) or `storage` fires (other tabs).
+ * Returns current auth state by calling GET /api/auth/me.
+ * Re-fetches when AUTH_CHANGED_EVENT fires (login/logout).
+ *
+ * States:
+ *  { user: null, loading: true }  — initial fetch in flight
+ *  { user: null, loading: false } — not authenticated
+ *  { user: {...}, loading: false } — authenticated
+ */
+export function useAuth(): AuthState {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    loading: true,
+  });
+
+  const fetchMe = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth/me", { credentials: "same-origin" });
+      if (res.ok) {
+        const user = await res.json();
+        setState({ user, loading: false });
+      } else {
+        setState({ user: null, loading: false });
+      }
+    } catch {
+      setState({ user: null, loading: false });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMe();
+
+    // Re-check when auth changes (login/logout in same tab)
+    const handler = () => fetchMe();
+    window.addEventListener(AUTH_CHANGED_EVENT, handler);
+    return () => window.removeEventListener(AUTH_CHANGED_EVENT, handler);
+  }, [fetchMe]);
+
+  return state;
+}
+
+/**
+ * @deprecated Use useAuth() instead. Backwards-compat shim.
+ * Returns a truthy string when authenticated, null otherwise.
+ * apiFetch on client-side routes through the backend proxy
+ * so the actual token value is irrelevant.
  */
 export function useAccessToken(): string | null {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const { user } = useAuth();
+  return user ? "cookie" : null;
 }

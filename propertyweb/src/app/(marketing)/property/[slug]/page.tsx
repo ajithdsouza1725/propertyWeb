@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { apiFetch, mediaAbsoluteUrl } from "@/lib/api";
 import type { PageResponse } from "@/lib/page-response";
 import { formatINR } from "@/lib/format";
+import { SAMPLE_LISTINGS } from "@/lib/sample-data";
 import { propertyTypeBadgeClass } from "@/lib/property-type-style";
 import { cn } from "@/lib/utils";
 import {
@@ -67,11 +68,50 @@ type PublicPropertyDetails = {
   saved: boolean;
 };
 
+function sampleToDetails(s: typeof SAMPLE_LISTINGS[number]): PublicPropertyDetails {
+  return {
+    id: s.id,
+    title: s.title,
+    slug: s.slug,
+    purpose: s.purpose,
+    propertyType: s.propertyType,
+    propertyTypeSlug: s.propertyTypeSlug,
+    locality: s.locality,
+    localitySlug: s.localitySlug,
+    price: s.price,
+    bedrooms: s.bedrooms,
+    bathrooms: s.bathrooms,
+    areaSqft: s.areaSqft,
+    isFeatured: s.isFeatured,
+    isVerified: s.isVerified,
+    description: `Beautiful ${s.propertyType.toLowerCase()} located in ${s.locality ?? "Mangalore"}. This verified listing offers excellent value in one of Mangalore's most sought-after neighbourhoods. Contact us directly for a site visit.`,
+    addressLine: `${s.locality ?? "Mangalore"}, Karnataka`,
+    city: "Mangalore",
+    pincode: "575001",
+    latitude: null,
+    longitude: null,
+    furnishingStatus: s.bedrooms ? "semi-furnished" : null,
+    parkingCount: s.bedrooms ? 1 : null,
+    floorNumber: s.bedrooms ? 3 : null,
+    totalFloors: s.bedrooms ? 8 : null,
+    possessionStatus: "ready",
+    securityDeposit: s.purpose === "rent" ? s.price * 2 : null,
+    carpetAreaSqft: s.areaSqft ? Math.round(s.areaSqft * 0.8) : null,
+    balconies: s.bedrooms ? Math.min(s.bedrooms, 2) : null,
+    imageUrls: s.thumbUrl ? [s.thumbUrl] : [],
+    amenities: s.bedrooms ? ["Lift", "Parking", "Security", "Power Backup", "Water Supply"] : ["Road Access", "Water Supply"],
+    viewsCount: Math.floor(Math.random() * 200) + 50,
+    saved: false,
+  };
+}
+
 async function getProperty(slug: string): Promise<PublicPropertyDetails | null> {
   try {
     return await apiFetch<PublicPropertyDetails>(`/api/public/properties/${slug}`);
   } catch {
-    return null;
+    // Fallback to sample data
+    const sample = SAMPLE_LISTINGS.find((s) => s.slug === slug);
+    return sample ? sampleToDetails(sample) : null;
   }
 }
 
@@ -85,7 +125,11 @@ async function getSimilar(p: PublicPropertyDetails): Promise<PublicPropertySumma
     const res = await apiFetch<PageResponse<PublicPropertySummary>>(`/api/public/properties?${params.toString()}`);
     return (res.content ?? []).filter((x) => x.slug !== p.slug).slice(0, 3);
   } catch {
-    return [];
+    // Fallback to sample data
+    const purpose = String(p.purpose ?? "").toLowerCase();
+    return (SAMPLE_LISTINGS as PublicPropertySummary[])
+      .filter((x) => x.slug !== p.slug && x.purpose === purpose)
+      .slice(0, 3);
   }
 }
 
@@ -127,6 +171,27 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
   const property = await getProperty(slug);
   if (!property) notFound();
 
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    description: property.description ?? "",
+    url: `${siteUrl}/property/${slug}`,
+    image: property.imageUrls?.[0] ? mediaAbsoluteUrl(property.imageUrls[0]) : "",
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: "INR",
+    },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: property.locality ?? "Mangalore",
+      addressRegion: "Karnataka",
+      addressCountry: "IN",
+    },
+  };
+
   const purpose = String(property.purpose ?? "").toLowerCase();
   const isRent = purpose === "rent";
   const similar = await getSimilar(property);
@@ -144,6 +209,10 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Track this view in localStorage for "recently viewed" */}
       <TrackPropertyView slug={property.slug} title={property.title} />
 
@@ -344,8 +413,8 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
                     referrerPolicy="no-referrer-when-downgrade"
                     src={
                       property.latitude != null && property.longitude != null
-                        ? `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${property.latitude},${property.longitude}&zoom=15`
-                        : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent((property.locality ?? "Mangalore") + ", Mangalore, Karnataka")}&zoom=13`
+                        ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? ""}&q=${property.latitude},${property.longitude}&zoom=15`
+                        : `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? ""}&q=${encodeURIComponent((property.locality ?? "Mangalore") + ", Mangalore, Karnataka")}&zoom=13`
                     }
                     allowFullScreen
                   />

@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { fetchPublicLocalities, type PublicLocality } from "@/lib/catalog";
+import { SAMPLE_LOCALITIES } from "@/lib/sample-data";
+
+const FALLBACK_LOCALITIES: PublicLocality[] = SAMPLE_LOCALITIES.map((l) => ({
+  ...l,
+  city: "Mangalore",
+}));
 
 export function usePublicLocalities() {
   const [localities, setLocalities] = useState<PublicLocality[]>([]);
@@ -13,11 +19,11 @@ export function usePublicLocalities() {
     fetchPublicLocalities()
       .then((r) => {
         if (!mounted) return;
-        setLocalities(r);
+        setLocalities(r.length ? r : FALLBACK_LOCALITIES);
       })
       .catch(() => {
         if (!mounted) return;
-        setLocalities([]);
+        setLocalities(FALLBACK_LOCALITIES);
       })
       .finally(() => {
         if (!mounted) return;

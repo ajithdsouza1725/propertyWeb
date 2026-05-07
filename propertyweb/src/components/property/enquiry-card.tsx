@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { apiFetch, getApiErrorMessage } from "@/lib/api";
-import { getAccessToken } from "@/lib/auth";
+// Auth handled by proxy — no direct token access needed
 import { Phone, Mail, User, MessageSquare, Send, CheckCircle2, ShieldCheck } from "lucide-react";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 
 export function EnquiryCard({
   propertyId,
@@ -29,9 +30,7 @@ export function EnquiryCard({
     setSending(true);
     setError(null);
     try {
-      const token = getAccessToken();
       await apiFetch("/api/public/enquiries", {
-        ...(token ? { token } : {}),
         body: {
           propertyId: typeof propertyId === "number" && Number.isFinite(propertyId) ? propertyId : null,
           propertySlug,
@@ -52,7 +51,7 @@ export function EnquiryCard({
 
   if (sent) {
     return (
-      <div className="overflow-hidden rounded-2xl border bg-card shadow-soft">
+      <div className="overflow-hidden rounded-2xl border bg-card shadow-card">
         <div className="flex flex-col items-center gap-4 p-8 text-center">
           <div className="flex size-14 items-center justify-center rounded-full bg-emerald-50">
             <CheckCircle2 className="size-7 text-emerald-600" />
@@ -81,7 +80,7 @@ export function EnquiryCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border bg-card shadow-soft">
+    <div className="overflow-hidden rounded-2xl border bg-card shadow-card">
       {/* Header — brand-deep ink, matches homepage hero tone */}
       <div className="relative overflow-hidden bg-brand-deep p-5">
         <div
@@ -158,6 +157,23 @@ export function EnquiryCard({
               </>
             )}
           </button>
+
+          {/* WhatsApp alternative */}
+          <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="h-px flex-1 bg-border" />
+            or
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <div className="mt-3">
+            <WhatsAppButton
+              property={{
+                title: propertyTitle,
+                locality: "Mangalore",
+                price: "",
+              }}
+              variant="full"
+            />
+          </div>
         </div>
 
         <div className="mt-5 flex flex-col gap-1.5 border-t pt-4">

@@ -15,7 +15,7 @@ export function PropertyCard({ property }: { property: Property }) {
   return (
     <Card className="group overflow-hidden border-muted/60 bg-card shadow-sm ring-1 ring-transparent transition hover:-translate-y-0.5 hover:border-border hover:shadow-lg hover:ring-primary/15">
       <div className="relative aspect-16/10 overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,var(--primary),var(--brand-2))] opacity-70" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,var(--primary),var(--accent))] opacity-70" />
         <Image
           src={cover.url}
           alt={cover.alt}

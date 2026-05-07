@@ -1,51 +1,38 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
-import { useAccessToken, useHydrated } from "@/lib/use-access-token";
+import { useEffect } from "react";
+import { useAuth, useHydrated } from "@/lib/use-access-token";
 
 /**
- * Gates every /seller/* panel page. Unauthenticated visitors go to /seller/login.
- * Buyers and admins are redirected to their own portals so the seller panel is never
- * visible without owner/agent credentials.
+ * Gates every /seller/* panel page. Unauthenticated visitors go to /login.
+ * Buyers and admins are redirected to their own portals.
  */
 export function SellerGuard({ children }: { children: React.ReactNode }) {
   const hydrated = useHydrated();
-  const token = useAccessToken();
+  const { user, loading } = useAuth();
   const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "ok">("loading");
 
   useEffect(() => {
-    if (!hydrated) return;
-    if (!token) {
+    if (!hydrated || loading) return;
+    if (!user) {
       router.replace("/login");
       return;
     }
-    let cancelled = false;
-    apiFetch<{ role: string }>("/api/auth/me", { token })
-      .then((me) => {
-        if (cancelled) return;
-        const role = (me.role ?? "").toLowerCase();
-        if (role === "owner" || role === "agent") {
-          setStatus("ok");
-        } else if (role === "admin") {
-          router.replace("/admin");
-        } else if (role === "buyer") {
-          router.replace("/account");
-        } else {
-          router.replace("/login");
-        }
-      })
-      .catch(() => {
-        if (!cancelled) router.replace("/login");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [hydrated, token, router]);
+    const role = (user.role ?? "").toLowerCase();
+    if (role === "admin") {
+      router.replace("/admin");
+    } else if (role === "buyer") {
+      router.replace("/account");
+    } else if (role !== "owner" && role !== "agent") {
+      router.replace("/login");
+    }
+  }, [hydrated, user, loading, router]);
 
-  if (status === "ok") return <>{children}</>;
+  const role = (user?.role ?? "").toLowerCase();
+  if (!loading && user && (role === "owner" || role === "agent")) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4 text-sm text-muted-foreground">

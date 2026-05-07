@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { apiFetch, getApiErrorMessage } from "@/lib/api";
-import { getAccessToken } from "@/lib/auth";
+// Auth handled by proxy — no direct token access needed
 import { Heart, Share2, Copy, Check, MessageCircle } from "lucide-react";
 
 export function PropertyDetailActions({
@@ -29,7 +29,7 @@ export function PropertyDetailActions({
   const [copied, setCopied] = useState(false);
 
   const syncSaved = useCallback(async () => {
-    const token = getAccessToken();
+    const token: string | null = null; // proxy handles auth
     if (!token) {
       setSaved(false);
       return;
@@ -80,7 +80,7 @@ export function PropertyDetailActions({
           className="gap-2"
           disabled={loading}
           onClick={async () => {
-            const token = getAccessToken();
+            const token: string | null = null; // proxy handles auth
             if (!token) {
               window.location.href = `/login?next=${encodeURIComponent(shareUrl)}`;
               return;

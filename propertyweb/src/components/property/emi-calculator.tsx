@@ -33,7 +33,7 @@ export function EmiCalculator({ propertyPrice }: { propertyPrice: number }) {
   }, [loanAmount, interestRate, tenureYears]);
 
   return (
-    <div className="rounded-2xl border bg-card p-5 shadow-soft">
+    <div className="rounded-2xl border bg-card p-5 shadow-card">
       <div className="flex items-center gap-2 text-base font-black tracking-tight">
         <Calculator className="size-5 text-primary" />
         EMI Calculator

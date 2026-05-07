@@ -26,7 +26,7 @@ export function CompareButton({ propertyId }: { propertyId: number }) {
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors ${
         active
           ? "bg-primary text-primary-foreground"
-          : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          : "bg-muted text-muted-foreground hover:bg-primary-soft hover:text-primary"
       }`}
       onClick={(e) => {
         e.preventDefault();
