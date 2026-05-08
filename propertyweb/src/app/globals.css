@@ -404,6 +404,114 @@
   display: none;
 }
 
+/* ── Animated gradient border — premium card highlight ── */
+.gradient-border-animated {
+  position: relative;
+  z-index: 0;
+}
+.gradient-border-animated::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--accent),
+    var(--primary),
+    var(--accent)
+  );
+  background-size: 300% 300%;
+  animation: gradient-rotate 4s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.gradient-border-animated:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradient-rotate {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Floating animation for decorative elements ─────── */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(1deg); }
+  66% { transform: translateY(4px) rotate(-1deg); }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* ── Pulse glow for CTA buttons ────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary); }
+  50% { box-shadow: 0 0 20px 4px color-mix(in oklch, var(--primary) 20%, transparent); }
+}
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ── Gradient text — used sparingly for headings ───── */
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Section divider — decorative wave ─────────────── */
+.section-divider {
+  position: relative;
+}
+.section-divider::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+/* ── Cursor-follow spotlight for hero ────────────────── */
+.cursor-spotlight {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  position: relative;
+}
+.cursor-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--spotlight-x) var(--spotlight-y),
+    rgba(15,123,108,0.08) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.cursor-spotlight:hover::before {
+  opacity: 1;
+}
+
+/* ── Magnetic hover — subtle pull toward cursor ──────── */
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ── Reduced motion ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,

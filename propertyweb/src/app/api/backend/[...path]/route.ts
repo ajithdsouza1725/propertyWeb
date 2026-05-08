@@ -13,7 +13,9 @@ async function proxy(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const backendPath = `/api/${path.join("/")}`;
+  // path array already contains "api/..." from the client URL
+  // e.g. /api/backend/api/seller/uploads → path = ["api","seller","uploads"]
+  const backendPath = `/${path.join("/")}`;
   const url = new URL(request.url);
   const query = url.search; // includes leading ?
 

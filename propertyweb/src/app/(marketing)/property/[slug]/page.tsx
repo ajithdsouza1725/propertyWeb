@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { EmiCalculator } from "@/components/property/emi-calculator";
 import { EnquiryCard } from "@/components/property/enquiry-card";
 import { PropertyDetailActions } from "@/components/property/property-detail-actions";
+import { PropertyGallery } from "@/components/property/property-gallery";
 import { PublicPropertyCard, type PublicPropertySummary } from "@/components/property/public-property-card";
 import { TrackPropertyView } from "@/components/property/track-property-view";
 import { Badge } from "@/components/ui/badge";
@@ -197,8 +198,6 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
   const similar = await getSimilar(property);
 
   const imgs = Array.isArray(property.imageUrls) ? property.imageUrls : [];
-  const heroSrc = imgs.length ? mediaAbsoluteUrl(imgs[0]) : null;
-  const thumbs = imgs.slice(1, 5);
   const amenityList = Array.isArray(property.amenities) ? property.amenities : [];
   const siteBase = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
   const shareUrl = `${siteBase}/property/${property.slug}`;
@@ -235,40 +234,8 @@ export default async function PropertyDetailsPage({ params }: { params: Promise<
           {/* ── LEFT COLUMN ──────────────────────────────── */}
           <section className="space-y-6 lg:col-span-8">
 
-            {/* Gallery */}
-            <div>
-              {heroSrc ? (
-                <a href={heroSrc} target="_blank" rel="noopener noreferrer" className="block">
-                  <img
-                    src={heroSrc}
-                    alt={property.title}
-                    className="aspect-video w-full rounded-2xl border object-cover shadow-sm hover:opacity-95 transition-opacity"
-                  />
-                </a>
-              ) : (
-                <div className="aspect-video w-full rounded-2xl border bg-muted/30 flex items-center justify-center">
-                  <Home className="size-16 text-muted-foreground/30" />
-                </div>
-              )}
-              {thumbs.length > 0 && (
-                <div className="mt-2 grid grid-cols-4 gap-2">
-                  {thumbs.map((u, i) => (
-                    <a key={u} href={mediaAbsoluteUrl(u)} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={mediaAbsoluteUrl(u)}
-                        alt={`Photo ${i + 2}`}
-                        className="aspect-video w-full rounded-xl border object-cover hover:opacity-90 transition-opacity"
-                      />
-                    </a>
-                  ))}
-                  {imgs.length > 5 && (
-                    <div className="aspect-video rounded-xl border bg-muted/30 flex items-center justify-center text-sm text-muted-foreground font-medium">
-                      +{imgs.length - 5} more
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* Gallery with lightbox */}
+            <PropertyGallery images={imgs} title={property.title} />
 
             {/* Title & Price */}
             <div className="flex flex-wrap items-start justify-between gap-4">
